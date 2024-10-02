@@ -42,6 +42,7 @@ class databaseManager():
         try:
             connection.cmd_query(f"INSERT INTO Plants VALUES ('{plantName}', '{maxHeight}');")
         except Error as e:
+            success = False 
             err = e 
 
         return success, err 
