@@ -24,7 +24,7 @@ class databaseManager():
 
         return success, err
 
-    def fetch(plantName : String):
+    def fetch(plantName : str):
         result = []
         err = None
 
@@ -35,7 +35,7 @@ class databaseManager():
 
         return result, err 
         
-    def add(plantName : String, maxHeight : int):
+    def add(plantName : str, maxHeight : int):
         success = True
         err = None
 
