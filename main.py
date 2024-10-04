@@ -12,3 +12,4 @@ if __name__ == "__main__":
     game = Game(screen, states, "SPLASH")
     game.run()
     py.quit()
+
