@@ -2,7 +2,6 @@ import pygame as py
 
 class GameState(object):
     #An actual parent class for individual game states to inherit from
-    #Not meant to actuall be instantated, is an abstract class
 
     def __init__(self):
         #Flag to signal when the state is complete and ready to transistion to the next state 

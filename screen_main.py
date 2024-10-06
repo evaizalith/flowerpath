@@ -1,11 +1,11 @@
 import pygame as py 
 from abstract_screen import GameState
 
-class Gameplay(GameState):
+class MainPage(GameState):
     #Another instance of a gamestate object 
     def __init__(self):
-        super(Gameplay, self).__init__()
-        self.next_state = "SPLASH"
+        super(MainPage, self).__init__()
+        self.next_state = "TITLE"
 
     def startup(self, persistent):
         self.persist = persistent

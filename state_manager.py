@@ -11,35 +11,28 @@ class Game(object):
         self.clock = py.time.Clock()
         self.fps = 60
         # A dictionary mapping state anems to game state objects
-        # Implementation seen in main function 
         self.states = states
         self.state_name = start_state
         self.state = self.states[self.state_name]
 
     def event_loop(self):
         #processes events and passes them to the current state 
-        #In charge of processing mouse clicks, key presses, etc 
-        #Passes them to the current sate 
         for event in py.event.get():
             self.state.get_event(event)
 
     def flip_state(self):
         #actually switches to the next game state and passes persistant data to the new state
         current_state = self.state_name
-        #The next state is stored in the current state's next_state attribute
         next_state = self.state.next_state
         #Marks the screen as NOT done before transistioning, so a return to that screen will not cause immediate exit
         self.state.done = False
         self.state_name = next_state
         self.state = self.states[self.state_name]
-        #calls the startup method of the new state, passing any persistant data from the current state to the new state 
         self.state.startup(self.states[current_state].persist)
 
     def update(self, dt):
         #checks for state flip and updates the current active state
-        #dt: millseconds since the last frame c
         if self.state.quit:
-            #Incidates the game should exit 
             self.done = True
         elif self.state.done:
             self.flip_state()
