@@ -1,11 +1,14 @@
 import pygame as py 
 from abstract_screen import GameState
+from flower_placeholder import Flower
+from flower_selection_ui import FlowerSelectionUI
 
 class MainPage(GameState):
     #Another instance of a gamestate object 
     def __init__(self):
         super(MainPage, self).__init__()
         self.next_state = "TITLE"
+        self.flower_selection_ui = FlowerSelectionUI(position=(100, 200))
 
     def startup(self, persistent):
         self.persist = persistent
@@ -27,3 +30,4 @@ class MainPage(GameState):
     def draw(self, surface):
         surface.fill(self.screen_color)
         surface.blit(self.text, self.title_rect)
+        self.flower_selection_ui.render(surface)
