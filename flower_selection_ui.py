@@ -9,6 +9,8 @@ class FlowerSelectionUI:
         self.position = position
         self.window_x_size = 20
         self.window_y_size = 20
+        self.button_vertical_spacing = 100
+        self.column_separation_margin = 90
         self.font = py.font.Font(None, 24)
         self.attached_image = py.image.load("images\\pinkflower.jpg").convert_alpha()
         self.flower_is_attached = False
@@ -20,7 +22,7 @@ class FlowerSelectionUI:
         first_column = len(self.flowers) // 2
         for i, flower in enumerate(self.flowers[:first_column]):
             flower_x_position = self.window_x_size
-            flower_y_position = self.window_y_size + i * 100
+            flower_y_position = self.window_y_size + i * self.button_vertical_spacing
             button = CertainFlowerButton(flower, flower_x_position, flower_y_position)
             button.render(surface)
 
@@ -31,8 +33,8 @@ class FlowerSelectionUI:
                 button.set_hovered(False)
 
         for i, flower in enumerate(self.flowers[first_column:]):
-            flower_x_position = self.window_x_size + 90
-            flower_y_position = self.window_y_size + i * 100
+            flower_x_position = self.window_x_size + self.column_separation_margin
+            flower_y_position = self.window_y_size + i * self.button_vertical_spacing
             button = CertainFlowerButton(flower, flower_x_position, flower_y_position)
             button.render(surface)
         
@@ -40,21 +42,8 @@ class FlowerSelectionUI:
                 self.hovered_flower = flower
 
         if self.hovered_flower: 
-
-            info_box_width = 500
-            info_box_height = 150
-            info_box_background = py.Rect((WINDOW_SIZE_WIDTH - info_box_width) // 3 + 50, WINDOW_SIZE_HEIGHT - info_box_height - 20, info_box_width, info_box_height)
-            info_background_color = (42, 42, 42) #Dark grey, Hex Code #2a2a2a
-            py.draw.rect(surface, info_background_color, info_box_background, border_radius=2)
-            
-            info_box_surface = py.Rect(((WINDOW_SIZE_WIDTH - info_box_width) // 3 + 60, WINDOW_SIZE_HEIGHT - info_box_height - 10, info_box_width - 20, info_box_height - 20))
-            info_box_surface_color = (173, 216, 230) #Very dark brown, Hex Code #1e0e07
-            py.draw.rect(surface, info_box_surface_color, info_box_surface, border_radius=2)
-
-            info_box_text = self.font.render(self.hovered_flower.name, True, (0, 0, 0))
-            info_box_text_surface = info_box_text.get_rect(center=info_box_surface.center)
-            surface.blit(info_box_text, info_box_text_surface)
-
+            flower_information_box = FlowerInformationBox(surface, self.hovered_flower)
+            flower_information_box.render(surface)
 
 class CertainFlowerButton: 
     def __init__(self, flower, button_x_position, button_y_position):
@@ -68,6 +57,8 @@ class CertainFlowerButton:
         self.image_path = "images\\pinkflower.jpg"
         self.is_button_clicked = False
         self.is_hovered = False
+        self.button_width_offset = 5
+        self.button_height_offset = 10
 
         if self.image_path:
             self.image = py.image.load(self.image_path).convert_alpha()
@@ -76,7 +67,7 @@ class CertainFlowerButton:
 
     def render(self, surface):
 
-        menu_background_surface = py.Rect(self.button_x_position - 5, self.button_y_position - 5, self.button_width + 10, self.button_height + 10)
+        menu_background_surface = py.Rect(self.button_x_position - self.button_width_offset, self.button_y_position - self.button_width_offset, self.button_width + self.button_height_offset, self.button_height + self.button_height_offset)
         menu_background_color = (42, 42, 42) #Dark grey, Hex Code #2a2a2a
         py.draw.rect(surface, menu_background_color, menu_background_surface)
 
@@ -108,10 +99,31 @@ class CertainFlowerButton:
         if self.certain_flower_is_clicked(self, mouse_position):
             self.button_is_clicked = True
     '''
-            
     
     #if certain_flower_is_clicked()
         #Display information about flower as accessed through the flower object
         #Set up display surface
         #Show display surface 
+class FlowerInformationBox:
+    def __init__(self, surface, hovered_flower, box_x_position=215, box_y_position=640, outline_width=10, info_box_width=500, info_box_height=150):
+        self.info_box_width = info_box_width
+        self.info_box_height = info_box_height
+        self.box_x_position = box_x_position
+        self.box_y_position = box_y_position
+        self.outline_width = outline_width
+        self.inner_box_offset = 2 * outline_width #Accounts for margins on each side 
+        self.font = py.font.Font(None, 24)
+        self.hovered_flower = hovered_flower
         
+    def render(self, surface):
+        info_box_background = py.Rect(self.box_x_position, self.box_y_position, self.info_box_width, self.info_box_height)
+        info_background_color = (42, 42, 42) #Dark grey, Hex Code #2a2a2a
+        py.draw.rect(surface, info_background_color, info_box_background, border_radius=2)
+            
+        info_box_surface = py.Rect(self.box_x_position + self.outline_width, self.box_y_position + self.outline_width, self.info_box_width - self.inner_box_offset, self.info_box_height - self.inner_box_offset)
+        info_box_surface_color = (173, 216, 230) #Very dark brown, Hex Code #1e0e07
+        py.draw.rect(surface, info_box_surface_color, info_box_surface, border_radius=2)
+
+        info_box_text = self.font.render(self.hovered_flower.name, True, (0, 0, 0))
+        info_box_text_surface = info_box_text.get_rect(center=info_box_surface.center)
+        surface.blit(info_box_text, info_box_text_surface)
