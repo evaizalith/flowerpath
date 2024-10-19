@@ -23,8 +23,9 @@ class MainPage(GameState):
             self.quit = True
         elif event.type == py.MOUSEBUTTONDOWN:
             self.title_rect.center = event.pos
-            #self.persist["screen_color"] = "forestgreen"
-            #self.done = True
+            mouse_position = py.mouse.get_pos()
+            print("mouse button down detected")
+            self.flower_selection_ui.click_to_close(mouse_position)
     
     def draw(self, surface):
         surface.fill(self.screen_color)

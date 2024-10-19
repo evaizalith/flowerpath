@@ -13,8 +13,8 @@ class FlowerSelectionUI:
         self.column_separation_margin = 90
         self.font = py.font.Font(None, 24)
         self.attached_image = py.image.load("images\\pinkflower.jpg").convert_alpha()
-        self.flower_is_attached = False
         self.hovered_flower = None
+        self.flower_information_box = None
 
     #This is the thing you call to get it on the main page
     def render(self, surface, mouse_position):
@@ -41,9 +41,23 @@ class FlowerSelectionUI:
             if button.check_if_hovered(mouse_position):
                 self.hovered_flower = flower
 
-        if self.hovered_flower: 
-            flower_information_box = FlowerInformationBox(surface, self.hovered_flower)
-            flower_information_box.render(surface)
+        if self.hovered_flower:
+            self.flower_information_box = FlowerInformationBox(surface, self.hovered_flower)
+            self.flower_information_box.is_visible = True
+            self.flower_information_box.render(surface)
+
+    
+    def click_to_close(self, mouse_position):
+        print(f"Click to close has been called!")
+        print("self.flower_information_box is", self.flower_information_box)
+        print("self.flower_information_box.is_visible is", self.flower_information_box.is_visible)
+        if (self.flower_information_box != None) and self.flower_information_box.is_visible:
+            print(f"Click to close has been called!")
+            if self.flower_information_box.check_exit_button_click(mouse_position):
+                print(f"The exit button has been clicked!")
+                self.flower_information_box.is_visible = False
+                self.hovered_flower = None
+
 
 class CertainFlowerButton: 
     def __init__(self, flower, button_x_position, button_y_position):
@@ -89,21 +103,7 @@ class CertainFlowerButton:
     def set_hovered(self, hovered):
         self.is_hovered = hovered
 
-    '''
-    def certain_flower_is_clicked(self, mouse_position):
-        x, y = mouse_position
-        is_clicked = (self.button_x_position < x < self.button_x_position + self.button_width) and (self.button_y_position < y < self.button_y_position + self.button_height)
-        return is_clicked
-    
-    def button_is_clicked(self, mouse_position):
-        if self.certain_flower_is_clicked(self, mouse_position):
-            self.button_is_clicked = True
-    '''
-    
-    #if certain_flower_is_clicked()
-        #Display information about flower as accessed through the flower object
-        #Set up display surface
-        #Show display surface 
+
 class FlowerInformationBox:
     def __init__(self, surface, hovered_flower, box_x_position=215, box_y_position=640, outline_width=10, info_box_width=500, info_box_height=150):
         self.info_box_width = info_box_width
@@ -114,8 +114,13 @@ class FlowerInformationBox:
         self.inner_box_offset = 2 * outline_width #Accounts for margins on each side 
         self.font = py.font.Font(None, 24)
         self.hovered_flower = hovered_flower
+        self.is_visible = False 
         
     def render(self, surface):
+
+        if not self.is_visible:
+            return 
+        
         info_box_background = py.Rect(self.box_x_position, self.box_y_position, self.info_box_width, self.info_box_height)
         info_background_color = (42, 42, 42) #Dark grey, Hex Code #2a2a2a
         py.draw.rect(surface, info_background_color, info_box_background, border_radius=2)
@@ -127,3 +132,19 @@ class FlowerInformationBox:
         info_box_text = self.font.render(self.hovered_flower.name, True, (0, 0, 0))
         info_box_text_surface = info_box_text.get_rect(center=info_box_surface.center)
         surface.blit(info_box_text, info_box_text_surface)
+
+        exit_button_surface = py.Rect(self.box_x_position + self.info_box_width - 25, self.box_y_position + 5, 20, 20)
+        exit_button_surface_color = (255, 81, 57)
+        exit_button_text = self.font.render("X", True, (0, 0, 0))
+        exit_button_text_surface = exit_button_text.get_rect(center=exit_button_surface.center)
+
+        py.draw.rect(surface, exit_button_surface_color, exit_button_surface, border_radius=2)
+        surface.blit(exit_button_text, exit_button_text_surface)
+
+    def check_exit_button_click(self, mouse_position):
+        x, y = mouse_position
+        print(f"Mouse: {x}, {y}, Button: {self.box_x_position + self.info_box_width - 25}, {self.box_y_position + 5}")
+        if((self.box_x_position + self.info_box_width - 25 <= x <= self.box_x_position + self.info_box_width) and (self.box_y_position + 5 <= y <= self.box_y_position + 25)):
+            return True
+        return False
+
