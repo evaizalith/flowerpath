@@ -34,7 +34,7 @@ class TextBox:
         if event.type == py.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 self.active = True
-                self.color = py.Color((20, 40, 125))
+                self.color = py.Color((40, 60, 200))
             else:
                 self.active = False
                 self.color = py.Color((20, 40, 75))
@@ -45,9 +45,9 @@ class TextBox:
                 elif event.key == py.K_RETURN: #enter
                     if self.text.isdigit():
                         sizeInt = int(self.text)
-                        if sizeInt > 800:
-                            sizeInt = 800
-                            self.text = "800"
+                        if sizeInt > 550:
+                            sizeInt = 600
+                            self.text = "550"
                         if sizeInt < 100:
                             sizeInt = 100
                             self.text = "100"
@@ -65,7 +65,10 @@ class TextBox:
 
     def draw(self, screen):
         screen.blit(self.textSurface, (self.rect.x + 5, self.rect.y + 5))
-        py.draw.rect(screen, self.color, self.rect, 2)
+        if(self.active):
+            py.draw.rect(screen, self.color, self.rect, 4)
+        else:
+            py.draw.rect(screen, self.color, self.rect, 2)
 
 # old rescale, attempted to handle math within the for loop
 # this was clean, but created weird outlier cases where an extra row would be created
@@ -80,8 +83,8 @@ def rescale(rowNum, colNum):
 """
 # the new rescale, now handles everything out of the for loop
 # less pretty, but works 100% of the time due to no floats in loop
-"""
-def rescale(rowNum, colNum, cells):
+
+def rescale(self, rowNum, colNum, cells):
     cells.clear()
     for x in range(rowNum):
         for y in range(colNum):
@@ -90,16 +93,10 @@ def rescale(rowNum, colNum, cells):
 
 # rescale that keeps the same number of cells, but changes their size.
 # Saves individual cell data!
-def rescaleCellNum(rowNum, colNum, cells):
+def rescaleCellNum(self, rowNum, colNum, cells):
     adjust = 0
     for x in range(rowNum):
         for y in range(colNum):
             cellRect = py.Rect(self.rectX + (self.textbox1.direction/rowNum * x), self.rectY + (self.textbox2.direction/colNum * y), self.textbox1.direction/rowNum, self.textbox2.direction/colNum)
             cells[adjust].rect = cellRect
             adjust += 1
-"""
-def rescale(rowNum, colNum, cells):
-    print("hello1")
-
-def rescaleCellNum(rowNum, colNum, cells):
-    print("hello2")

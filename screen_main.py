@@ -10,18 +10,18 @@ class MainPage(GameState):
         super(MainPage, self).__init__()
         self.next_state = "TITLE"
         self.flower_selection_ui = FlowerSelectionUI(position=(100, 200))
-        self.rectX = 250
-        self.rectY = 100
+        self.rectX = 200
+        self.rectY = 75
         self.rectSizeX = 500
         self.rectSizeY = 200
         
-        self.textbox1 = TextBox(200, 50, 140, 32, self.rectSizeX)
-        self.textbox2 = TextBox(390, 50, 140, 32, self.rectSizeY)
+        self.textbox1 = TextBox(200, 15, 140, 32, self.rectSizeX)
+        self.textbox2 = TextBox(390, 15, 140, 32, self.rectSizeY)
         self.textboxes = [self.textbox1, self.textbox2]
         self.cells = []
         self.rowNum = 5
         self.colNum = 5
-        rescale(self.rowNum, self.colNum, self.cells)
+        rescale(self, self.rowNum, self.colNum, self.cells)
 
     def startup(self, persistent):
         self.persist = persistent
@@ -43,26 +43,26 @@ class MainPage(GameState):
             box.handleEvent(event)
             box.update()
             if box.rescaleToggle:
-                rescaleCellNum(self.rowNum, self.colNum, self.cells)
+                rescaleCellNum(self, self.rowNum, self.colNum, self.cells)
         for cell in self.cells:
             cell.handleEvent(event)
         if event.type == py.KEYDOWN:
             if event.key == py.K_UP:
                 if(self.colNum > 1):
                     self.colNum -= 1
-                    rescale(self.rowNum, self.colNum, self.cells)
+                    rescale(self, self.rowNum, self.colNum, self.cells)
             if event.key == py.K_DOWN:
                 if(self.colNum < 8):
                     self.colNum += 1
-                    rescale(self.rowNum, self.colNum, self.cells)
+                    rescale(self, self.rowNum, self.colNum, self.cells)
             if event.key == py.K_LEFT:
                 if(self.rowNum > 1):
                     self.rowNum -= 1
-                    rescale(self.rowNum, self.colNum, self.cells)
+                    rescale(self, self.rowNum, self.colNum, self.cells)
             if event.key == py.K_RIGHT:
                 if(self.rowNum < 8):
                     self.rowNum += 1
-                    rescale(self.rowNum, self.colNum, self.cells)
+                    rescale(self, self.rowNum, self.colNum, self.cells)
             #self.persist["screen_color"] = "forestgreen"
             #self.done = True
     
