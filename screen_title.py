@@ -16,9 +16,9 @@ class TitleScreen(GameState):
     def get_event(self, event):
         if event.type == py.QUIT:
             self.quit = True
-        elif event.type == py.MOUSEBUTTONDOWN:
-            self.persist["screen_color"] = "blue"
-            self.done = True
+        #elif event.type == py.MOUSEBUTTONDOWN:
+            #self.persist["screen_color"] = "blue"
+            #self.done = True
 
     
     def draw(self, surface):

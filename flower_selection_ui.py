@@ -48,13 +48,8 @@ class FlowerSelectionUI:
 
     
     def click_to_close(self, mouse_position):
-        print(f"Click to close has been called!")
-        print("self.flower_information_box is", self.flower_information_box)
-        print("self.flower_information_box.is_visible is", self.flower_information_box.is_visible)
         if (self.flower_information_box != None) and self.flower_information_box.is_visible:
-            print(f"Click to close has been called!")
             if self.flower_information_box.check_exit_button_click(mouse_position):
-                print(f"The exit button has been clicked!")
                 self.flower_information_box.is_visible = False
                 self.hovered_flower = None
 
@@ -143,7 +138,6 @@ class FlowerInformationBox:
 
     def check_exit_button_click(self, mouse_position):
         x, y = mouse_position
-        print(f"Mouse: {x}, {y}, Button: {self.box_x_position + self.info_box_width - 25}, {self.box_y_position + 5}")
         if((self.box_x_position + self.info_box_width - 25 <= x <= self.box_x_position + self.info_box_width) and (self.box_y_position + 5 <= y <= self.box_y_position + 25)):
             return True
         return False
