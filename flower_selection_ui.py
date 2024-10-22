@@ -117,7 +117,7 @@ class FlowerInformationBox:
             return 
         
         info_box_background = py.Rect(self.box_x_position, self.box_y_position, self.info_box_width, self.info_box_height)
-        info_background_color = DARK_GREY
+        info_background_color = WARM_DARK_BROWN
         py.draw.rect(surface, info_background_color, info_box_background, border_radius=10)
             
         info_box_surface = py.Rect(self.box_x_position + self.outline_width, self.box_y_position + self.outline_width, self.info_box_width - self.inner_box_offset, self.info_box_height - self.inner_box_offset)
