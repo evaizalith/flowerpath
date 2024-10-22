@@ -1,48 +1,67 @@
-import mysql.connector
-from mysql.connector import Error
+import sqlite3
 
 class databaseManager():
-    def __init__(user, password, host, database):
-        config = {
-            'user': user,
-            'password': password,
-            'host': host,
-            'database': database,
-            'raise_on_warnings': True
-        }
-        connection = None
+    def __init__(self, database):
+        self.database = database
+        self.cursor = None
+        self.connection = None
 
-    def connect():
+    def connect(self):
         success = True
         err = None
 
         try:
-            connection = mysql.connector.connect(**config)
-        except Error as e:
+            self.connection = sqlite3.connect(self.database)
+        except sqlite3.Error as e:
             success = False
             err = e
 
+        if (success):
+            self.cursor = self.connection.cursor()
+            self.cursor.execute("CREATE TABLE IF NOT EXISTS Plants()")
+
         return success, err
 
-    def fetch(plantName : str):
+    def fetch(self, plantName : str):
         result = []
         err = None
 
         try:
-            result = connection.cmd_query(f"SELECT * FROM Plants WHERE Name=\"{plantName}\";")
-        except Error as e: 
+            result = self.cursor.execute(f"SELECT * FROM Plants WHERE Name=\"{plantName}\"")
+        except sqlite3.Error as e: 
             err = e 
 
         return result, err 
         
-    def add(plantName : str, maxHeight : int):
+    def add(self, plantName : str, maxHeight : int):
         success = True
         err = None
 
         try:
-            connection.cmd_query(f"INSERT INTO Plants VALUES ('{plantName}', '{maxHeight}');")
-        except Error as e:
+            self.cursor.execute(f"INSERT INTO Plants VALUES ('{plantName}', '{maxHeight}');")
+        except sqlite3.Error as e:
             success = False 
             err = e 
 
+        if (success):
+            self.connection.commit()
+
         return success, err 
+
+    def close(self):
+        self.connection.close()
+
+# Used for testing the database manager
+if __name__ == "__main__":
+    print("Testing databaseManager...")
+    db = databaseManager("test")
+    db.connect()
+
+    value = db.fetch("testPlant")
+    print(f"db has: {value}")
+
+    db.add("fetchPlant", 2)
+    value = db.fetch("testPlant")
+    print(f"db has: {value}")
+
+    db.close()
