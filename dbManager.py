@@ -1,48 +1,74 @@
-import mysql.connector
-from mysql.connector import Error
+import sqlite3
+import plant
 
 class databaseManager():
-    def __init__(user, password, host, database):
-        config = {
-            'user': user,
-            'password': password,
-            'host': host,
-            'database': database,
-            'raise_on_warnings': True
-        }
-        connection = None
+    def __init__(self, database):
+        self.database = database
+        self.cursor = None
+        self.connection = None
 
-    def connect():
+    def connect(self):
         success = True
         err = None
 
         try:
-            connection = mysql.connector.connect(**config)
-        except Error as e:
+            self.connection = sqlite3.connect(self.database)
+        except sqlite3.Error as e:
             success = False
             err = e
 
+        if (success):
+            self.cursor = self.connection.cursor()
+            self.cursor.execute("CREATE TABLE IF NOT EXISTS Plants(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, maxHeight INTEGER, maxSize INTEGER, germinationTime INTEGER, matureTime INTEGER, bloomTime INTEGER, bloomStart INTEGER, bloomEnd INTEGER, fullSun BOOLEAN, partialShade BOOLEAN, fullShade BOOLEAN, droughtTolerant INTEGER, overwaterSensitive BOOLEAN, color VARCHAR, perennial BOOLEAN)")
+
         return success, err
 
-    def fetch(plantName : str):
+    def fetch(self, plantName : str):
+        fetch = []
         result = []
         err = None
 
         try:
-            result = connection.cmd_query(f"SELECT * FROM Plants WHERE Name=\"{plantName}\";")
-        except Error as e: 
+            fetch = self.cursor.execute(f"SELECT * FROM Plants WHERE Name=\"{plantName}\"")
+            result = fetch.fetchall()
+        except sqlite3.Error as e: 
             err = e 
 
         return result, err 
         
-    def add(plantName : str, maxHeight : int):
+    def add(self, plant):
         success = True
         err = None
 
         try:
-            connection.cmd_query(f"INSERT INTO Plants VALUES ('{plantName}', '{maxHeight}');")
-        except Error as e:
+            self.cursor.execute(f"INSERT INTO Plants(name, maxHeight, maxSize, germinationTime, matureTime, bloomTime, bloomStart, bloomEnd, fullSun, partialShade, fullShade, droughtTolerant, overwaterSensitive, color, perennial) VALUES ('{plant.name}', '{plant.maxHeight}', '{plant.maxSize}', '{plant.germinationTime}', '{plant.matureTime}', '{plant.bloomTime}', '{plant.bloomStart}', '{plant.bloomEnd}', '{plant.fullSun}', '{plant.partialShade}', '{plant.fullShade}', '{plant.droughtTolerant}', '{plant.overwaterSensitive}', '{plant.color}', '{plant.perennial}')")
+        except sqlite3.Error as e:
             success = False 
             err = e 
 
+        if (success):
+            self.connection.commit()
+
         return success, err 
+
+    def close(self):
+        self.connection.close()
+
+# Used for testing the database manager
+if __name__ == "__main__":
+    print("Testing databaseManager...")
+    db = databaseManager("test")
+    success, error = db.connect()
+    print(f"db.connect() return: {success},{error}")
+
+    plant = plant.Plant("testPlant", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    value, err = db.fetch("testPlant")
+    print(f"db has: {value}, Err: {err}")
+
+    value, err = db.add(plant)
+    print(f"db.add(): {value}, Err: {err}")
+    value, err = db.fetch("testPlant")
+    print(f"db has: {value}, Err: {err}")
+
+    db.close()
