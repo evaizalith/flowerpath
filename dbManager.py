@@ -1,4 +1,5 @@
 import sqlite3
+import plant
 
 class databaseManager():
     def __init__(self, database):
@@ -18,27 +19,29 @@ class databaseManager():
 
         if (success):
             self.cursor = self.connection.cursor()
-            self.cursor.execute("CREATE TABLE IF NOT EXISTS Plants()")
+            self.cursor.execute("CREATE TABLE IF NOT EXISTS Plants(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, maxHeight INTEGER, maxSize INTEGER, germinationTime INTEGER, matureTime INTEGER, bloomTime INTEGER, bloomStart INTEGER, bloomEnd INTEGER, fullSun BOOLEAN, partialShade BOOLEAN, fullShade BOOLEAN, droughtTolerant INTEGER, overwaterSensitive BOOLEAN, color VARCHAR, perennial BOOLEAN)")
 
         return success, err
 
     def fetch(self, plantName : str):
+        fetch = []
         result = []
         err = None
 
         try:
-            result = self.cursor.execute(f"SELECT * FROM Plants WHERE Name=\"{plantName}\"")
+            fetch = self.cursor.execute(f"SELECT * FROM Plants WHERE Name=\"{plantName}\"")
+            result = fetch.fetchall()
         except sqlite3.Error as e: 
             err = e 
 
         return result, err 
         
-    def add(self, plantName : str, maxHeight : int):
+    def add(self, plant):
         success = True
         err = None
 
         try:
-            self.cursor.execute(f"INSERT INTO Plants VALUES ('{plantName}', '{maxHeight}');")
+            self.cursor.execute(f"INSERT INTO Plants(name, maxHeight, maxSize, germinationTime, matureTime, bloomTime, bloomStart, bloomEnd, fullSun, partialShade, fullShade, droughtTolerant, overwaterSensitive, color, perennial) VALUES ('{plant.name}', '{plant.maxHeight}', '{plant.maxSize}', '{plant.germinationTime}', '{plant.matureTime}', '{plant.bloomTime}', '{plant.bloomStart}', '{plant.bloomEnd}', '{plant.fullSun}', '{plant.partialShade}', '{plant.fullShade}', '{plant.droughtTolerant}', '{plant.overwaterSensitive}', '{plant.color}', '{plant.perennial}')")
         except sqlite3.Error as e:
             success = False 
             err = e 
@@ -55,13 +58,17 @@ class databaseManager():
 if __name__ == "__main__":
     print("Testing databaseManager...")
     db = databaseManager("test")
-    db.connect()
+    success, error = db.connect()
+    print(f"db.connect() return: {success},{error}")
 
-    value = db.fetch("testPlant")
-    print(f"db has: {value}")
+    plant = plant.Plant("testPlant", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-    db.add("fetchPlant", 2)
-    value = db.fetch("testPlant")
-    print(f"db has: {value}")
+    value, err = db.fetch("testPlant")
+    print(f"db has: {value}, Err: {err}")
+
+    value, err = db.add(plant)
+    print(f"db.add(): {value}, Err: {err}")
+    value, err = db.fetch("testPlant")
+    print(f"db has: {value}, Err: {err}")
 
     db.close()
