@@ -1,6 +1,15 @@
 
 WINDOW_SIZE_WIDTH = 1000
-WINDOW_SIZE_HEIGHT = 800
+WINDOW_SIZE_HEIGHT = 700
+BUTTON_SIZE = 40
+
+INFO_BOX_SPECS = {
+    "x": 15,
+    "y": 530,
+    "outline": 10,
+    "w": 975,
+    "h": 150
+}
 
 DARK_GREEN = (36, 63, 29) #234F1D
 MEDIUM_GREEN = (136, 162, 1) #88A201
