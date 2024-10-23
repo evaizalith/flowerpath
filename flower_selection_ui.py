@@ -12,7 +12,7 @@ class FlowerSelectionUI:
         self.button_vertical_spacing = 70
         self.column_separation_margin = 70
         self.font = py.font.Font(None, 24)
-        self.attached_image = py.image.load("images\\pinkflower.jpg").convert_alpha()
+        self.attached_image = py.image.load("placeholders_assets/pinkflower.jpg").convert_alpha()
         self.hovered_flower = None
         self.flower_information_box = None
 
@@ -63,7 +63,7 @@ class CertainFlowerButton:
         self.button_height = 55
         self.font = py.font.Font(None, 24)
         self.image = None
-        self.image_path = "images\\pinkflower.jpg"
+        self.image_path = "placeholders_assets/pinkflower.jpg"
         self.is_button_clicked = False
         self.is_hovered = False
         self.button_width_offset = 5
