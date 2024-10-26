@@ -48,9 +48,9 @@ class MainPage(GameState):
 
         #holds current flower selection - this is the getter
         #Returns plant object 
-        user_selected_flower = self.flower_selection_ui.get_current_flower()
-        if user_selected_flower:
-            print(f"User selected flower on the main page: {user_selected_flower.name}")
+            user_selected_flower = self.flower_selection_ui.get_current_flower()
+            if user_selected_flower:
+                print(f"User selected flower on the main page: {user_selected_flower.name}")
 
         for box in self.textboxes:
             box.handleEvent(event)
