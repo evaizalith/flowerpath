@@ -18,6 +18,7 @@ class FlowerSelectionUI:
         self.attached_image = py.image.load("placeholders_assets/pinkflower.jpg").convert_alpha()
         self.hovered_flower = None
         self.flower_information_box = None
+        self.user_selected_flower = None
 
         self.db_manager = databaseManager("test")
         #Add 'crash gracefully' feature later 
@@ -35,7 +36,7 @@ class FlowerSelectionUI:
 
 
     #This is the thing you call to get it on the main page
-    def render(self, surface, mouse_position):
+    def render(self, surface, mouse_position, mouse_click):
         font = py.font.Font(None, 24)
         first_column = len(self.flowers) // 2
         for i, flower in enumerate(self.flowers[:first_column]):
@@ -50,6 +51,10 @@ class FlowerSelectionUI:
             else:
                 button.set_hovered(False)
 
+            get_selected_flower = button.get_flower(mouse_position, mouse_click)
+            if get_selected_flower:
+                print(f"Selected flower: {get_selected_flower.name}")
+
         for i, flower in enumerate(self.flowers[first_column:]):
             flower_x_position = self.window_x_size + self.column_separation_margin
             flower_y_position = self.window_y_size + i * self.button_vertical_spacing
@@ -58,13 +63,25 @@ class FlowerSelectionUI:
         
             if button.check_if_hovered(mouse_position):
                 self.hovered_flower = flower
+                button.set_hovered(True)
+            else:
+                button.set_hovered(False)
+
+            get_selected_flower = button.get_flower(mouse_position, mouse_click)
+            if get_selected_flower:
+                self.user_selected_flower = get_selected_flower
 
         if self.hovered_flower:
             self.flower_information_box = FlowerInformationBox(surface, self.hovered_flower)
             self.flower_information_box.is_visible = True
             self.flower_information_box.render(surface)
 
-    
+    #------------- This is the implementation of the getter for main page ----- This returns the current flower!!!!!!
+    def get_current_flower(self):
+        retrieved_flower = self.user_selected_flower
+        self.user_selected_flower = None
+        return retrieved_flower
+
     def click_to_close(self, mouse_position):
         if (self.flower_information_box != None) and self.flower_information_box.is_visible:
             if self.flower_information_box.check_exit_button_click(mouse_position):
@@ -100,9 +117,8 @@ class FlowerSelectionUI:
                     flowers.append(plant)
 
         return flowers
-                    
-
-
+    
+                
 class CertainFlowerButton: 
     def __init__(self, flower, button_x_position, button_y_position):
         self.flower = flower
@@ -146,6 +162,12 @@ class CertainFlowerButton:
     
     def set_hovered(self, hovered):
         self.is_hovered = hovered
+    
+    #This is a getter that we will use to get the flower 
+    def get_flower(self, mouse_position, mouse_click):
+        if self.check_if_hovered(mouse_position) and mouse_click:
+            return self.flower
+        return None
 
 
 class FlowerInformationBox:
