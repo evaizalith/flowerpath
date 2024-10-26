@@ -16,6 +16,7 @@ class MainPage(GameState):
         self.rectY = 75
         self.rectSizeX = 500
         self.rectSizeY = 200
+        self.user_selected_flower = None
         
         self.textbox1 = TextBox(200, 15, 140, 32, self.rectSizeX)
         self.textbox2 = TextBox(390, 15, 140, 32, self.rectSizeY)
