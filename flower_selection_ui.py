@@ -83,10 +83,14 @@ class FlowerSelectionUI:
         return retrieved_flower
 
     def click_to_close(self, mouse_position):
+        isClosed = False
         if (self.flower_information_box != None) and self.flower_information_box.is_visible:
             if self.flower_information_box.check_exit_button_click(mouse_position):
                 self.flower_information_box.is_visible = False
                 self.hovered_flower = None
+                isClosed = True
+        return isClosed
+
 
     
     def load_flowers_from_database(self):

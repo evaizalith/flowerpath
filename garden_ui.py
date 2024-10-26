@@ -1,11 +1,17 @@
 import pygame as py
+from constants_config import *
+from plant import Plant
 
 class ClickBox:
 
-    def __init__(self, x, y, w, h):
+    def __init__(self, x, y, w, h, fullSun = True, partialShade = False, fullShade = False, droughtRes = 0):
         self.rect = py.Rect(x, y, w, h)
         self.color = (0, 0, 0)
         self.fill = False
+        self.fullSun = fullSun
+        self.partialShade = partialShade
+        self.fullShade = fullShade
+        self.droughtRes = droughtRes
 
     def handleEvent(self, event):
         if event.type == py.MOUSEBUTTONDOWN:
@@ -16,7 +22,46 @@ class ClickBox:
         if self.fill:
             py.draw.rect(screen, (0, 0, 0), self.rect)
         else:
-            py.draw.rect(screen, (0, 0, 0), self.rect, 1) 
+            py.draw.rect(screen, (0, 0, 0), self.rect, 1)
+
+    """ 
+    Logic for via draw:
+    viability starts at 0 (neutral), and can become 1 (good) or -1 (bad)
+    if cell drought resistance is not neutral, compare resistance.
+    if it matches, viability becomes 1, if not, viability becomes -1
+    if viability is not failed, check sun level.
+    If sun level matches anywhere, viability becomes 1 (if not already)
+    If there are no matches, viability becomes -1
+    Boxes are drawn green for viable and red for not viable.
+    Neutral boxes are drawn the same
+    """   
+    def viabilityDraw(self, screen, selectedFlower):
+        viability = 0
+        if not self.droughtRes == 0:
+            if self.droughtRes == selectedFlower.droughtTolerant:
+                viability = 1
+            else: 
+                viability = -1
+        if not viability == -1:
+            if selectedFlower.fullSun == True and self.fullSun == True:
+                viability = 1
+            elif self.partialShade == True and selectedFlower.partialShade == True:
+                viability = 1
+            elif self.fullShade == True and selectedFlower.fullShade == True:
+                viability = 1
+            else:
+                viability = -1
+        match viability:
+            case 1:
+                py.draw.rect(screen, DARK_GREEN, self.rect)
+            case 0:
+                py.draw.rect(screen, PURE_BLACK, self.rect, 3)
+            case -1:
+                py.draw.rect(screen, DARK_RED, self.rect)
+            case _:
+                py.draw.rect(screen, PURE_BLACK, self.rect, 1)
+            
+                
 
 class TextBox:
 
