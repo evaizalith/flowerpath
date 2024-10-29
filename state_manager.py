@@ -54,7 +54,7 @@ class Game(object):
     def update(self, dt):
         #checks for state flip and updates the current active state
         self.idle_timer = self.idle_timer + (dt / 1000)
-        print(f"Idle Timer: {self.idle_timer:.2f} seconds")
+        print(f"Idle Timer: {self.idle_timer} seconds")
 
         if self.idle_timer > TIME_TO_IDLE_WARNING:
             self.idle_notification_active = True
