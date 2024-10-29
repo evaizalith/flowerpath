@@ -19,7 +19,7 @@ class Game(object):
         self.idle_timer = 0
         self.idle_notification_active = False
         
-        self.start_button = StartButton(box_x_position=300, box_y_position=550)
+        self.resume_button = ResumeButton(box_x_position=300, box_y_position=550)
         self.idle_notification = IdleNotification(box_x_position=300, box_y_position=550)
 
     def event_loop(self):
@@ -30,7 +30,7 @@ class Game(object):
                     self.done = True
                 elif event.type == py.MOUSEBUTTONDOWN:
                     mouse_position = py.mouse.get_pos()
-                    if self.start_button.check_start_button_click(mouse_position):
+                    if self.resume_button.check_resume_button_click(mouse_position):
                         self.idle_screen = False
                         self.idle_notification_active = False
                         self.idle_timer = 0
@@ -81,7 +81,7 @@ class Game(object):
             idle_screen_rect = self.screen.get_rect()
             py.draw.rect(self.screen, idle_screen_color, idle_screen_rect)
 
-            self.start_button.render(self.screen)
+            self.resume_button.render(self.screen)
 
     def run(self):
         #main game loop
@@ -93,7 +93,7 @@ class Game(object):
             self.draw()
             py.display.update()
 
-class StartButton:
+class ResumeButton:
     def __init__(self, box_x_position=152, box_y_position=1200, info_box_width=400, info_box_height=67):
         self.info_box_width = info_box_width
         self.info_box_height = info_box_height
@@ -106,11 +106,11 @@ class StartButton:
         button_color = MEDIUM_GREEN 
         py.draw.rect(surface, button_color, button_rect, border_radius=20)
         
-        button_text = self.font.render("Start", True, WARM_SOFT_WHITE)
+        button_text = self.font.render("Resume", True, WARM_SOFT_WHITE)
         button_text_rect = button_text.get_rect(center=button_rect.center)
         surface.blit(button_text, button_text_rect)
 
-    def check_start_button_click(self, mouse_position):
+    def check_resume_button_click(self, mouse_position):
         x, y = mouse_position
         if((self.box_x_position <= x <= self.box_x_position + self.info_box_width) and (self.box_y_position <= y <= self.box_y_position + self.info_box_height)):
             return True
@@ -129,11 +129,11 @@ class IdleNotification:
         button_color = MEDIUM_GREEN 
         py.draw.rect(surface, button_color, button_rect, border_radius=20)
         
-        button_text = self.font.render("You have been idle too long. Idle timeout in 5 seconds...", True, WARM_SOFT_WHITE)
+        button_text = self.font.render("Idle timeout in 5 seconds...", True, WARM_SOFT_WHITE)
         button_text_rect = button_text.get_rect(center=button_rect.center)
         surface.blit(button_text, button_text_rect)
 
-    def check_start_button_click(self, mouse_position):
+    def check_idle_button_click(self, mouse_position):
         x, y = mouse_position
         if((self.box_x_position <= x <= self.box_x_position + self.info_box_width) and (self.box_y_position <= y <= self.box_y_position + self.info_box_height)):
             return True
