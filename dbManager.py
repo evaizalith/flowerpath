@@ -24,7 +24,7 @@ class databaseManager():
 
         if (success):
             self.cursor = self.connection.cursor()
-            self.cursor.execute("CREATE TABLE IF NOT EXISTS Plants(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, maxHeight INTEGER, maxSize INTEGER, germinationTime INTEGER, matureTime INTEGER, bloomTime INTEGER, bloomStart INTEGER, bloomEnd INTEGER, fullSun BOOLEAN, partialShade BOOLEAN, fullShade BOOLEAN, droughtTolerant INTEGER, overwaterSensitive BOOLEAN, color VARCHAR, perennial BOOLEAN, texture0 VARCHAR, texture1 VARCHAR, texture2 VARCHAR, texture3 VARCHAR)")
+            self.cursor.execute("CREATE TABLE IF NOT EXISTS Plants(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, maxHeight INTEGER, maxSize INTEGER, germinationTime INTEGER, matureTime INTEGER, bloomTime INTEGER, bloomStart INTEGER, bloomEnd INTEGER, fullSun BOOLEAN, partialShade BOOLEAN, fullShade BOOLEAN, droughtTolerant INTEGER, overwaterSensitive BOOLEAN, color VARCHAR, perennial BOOLEAN, texture1 VARCHAR, texture2 VARCHAR, texture3 VARCHAR)")
 
         return success, err
 
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     success, error = db.connect()
     print(f"db.connect() return: {success},{error}")
 
-    plant = plant.Plant("testPlant", 
+    plant = p.Plant("testPlant", 
                         0, #max height
                         0, #max size
                         0, #germination time
@@ -149,7 +149,10 @@ if __name__ == "__main__":
                         0, #drought tolerant
                         0, #overwater sensitive
                         0, #color
-                        0) #perennial
+                        0, #perennial
+                        0, #texture1
+                        0, #texture2
+                        0) #texture3
 
     value, err = db.fetch("testPlant")
     print(f"db has: {value}, Err: {err}")

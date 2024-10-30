@@ -116,8 +116,11 @@ class FlowerSelectionUI:
                     overwater_sensitive = flower[13]
                     color = flower[14]
                     perennial = flower[15]
+                    texture1 = flower[16]
+                    texture2 = flower[17]
+                    texture3 = flower[18]
 
-                    plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial)
+                    plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial, texture1, texture2, texture3)
                     flowers.append(plant)
 
         return flowers
