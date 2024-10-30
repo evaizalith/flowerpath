@@ -12,8 +12,8 @@ class FlowerSelectionUI:
         self.position = position
         self.window_x_size = 20
         self.window_y_size = 40
-        self.button_vertical_spacing = 70
-        self.column_separation_margin = 70
+        self.button_vertical_spacing = 60
+        self.column_separation_margin = 60
         self.font = py.font.Font(None, 24)
         self.attached_image = py.image.load("placeholders_assets/pinkflower.jpg").convert_alpha()
         self.hovered_flower = None
@@ -120,12 +120,13 @@ class FlowerSelectionUI:
     
                 
 class CertainFlowerButton: 
+
     def __init__(self, flower, button_x_position, button_y_position):
         self.flower = flower
         self.button_x_position = button_x_position
         self.button_y_position = button_y_position
-        self.button_width = 55
-        self.button_height = 55
+        self.button_width = BUTTON_SIZE
+        self.button_height = BUTTON_SIZE
         self.font = py.font.Font(None, 24)
         self.image = None
         self.image_path = "placeholders_assets/pinkflower.jpg"
@@ -171,7 +172,12 @@ class CertainFlowerButton:
 
 
 class FlowerInformationBox:
-    def __init__(self, surface, hovered_flower, box_x_position=15, box_y_position=620, outline_width=10, info_box_width=975, info_box_height=150):
+    def __init__(self, surface, hovered_flower, 
+                 box_x_position=INFO_BOX_SPECS["x"], 
+                 box_y_position=INFO_BOX_SPECS["y"], 
+                 outline_width=INFO_BOX_SPECS["outline"], 
+                 info_box_width=INFO_BOX_SPECS["w"], 
+                 info_box_height=INFO_BOX_SPECS["h"]):
         self.info_box_width = info_box_width
         self.info_box_height = info_box_height
         self.box_x_position = box_x_position
