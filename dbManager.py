@@ -54,6 +54,9 @@ class databaseManager():
     def close(self):
         self.connection.close()
 
+    def __del__(self):
+        close()
+
 # Used for testing the database manager
 if __name__ == "__main__":
     print("Testing databaseManager...")
