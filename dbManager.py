@@ -51,11 +51,24 @@ class databaseManager():
 
         return success, err 
 
+    def remove(self, plantName):
+        success = True
+        err = None
+
+        try:
+            self.cursor.execute(f"DELETE FROM Plants WHERE name = '{plantName}'")
+            self.connection.commit()
+        except sqlite3.Error as e:
+            success = False
+            err = e
+
+        return success, err
+
     def close(self):
         self.connection.close()
 
     def __del__(self):
-        close()
+        self.close()
 
 # Used for testing the database manager
 if __name__ == "__main__":
@@ -70,8 +83,13 @@ if __name__ == "__main__":
     print(f"db has: {value}, Err: {err}")
 
     value, err = db.add(plant)
-    print(f"db.add(): {value}, Err: {err}")
+    print(f"db.add(testPlant): {value}, Err: {err}")
     value, err = db.fetch("testPlant")
     print(f"db has: {value}, Err: {err}")
+
+    value, err = db.remove("testPlant")
+    print(f"db.remove(testPlant): {value}, Err: {err}")
+    value, err = db.fetch("testPlant")
+    print(f"db.fetch(testPlant): {value}, Err: {err}")
 
     db.close()
