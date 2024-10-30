@@ -83,10 +83,14 @@ class FlowerSelectionUI:
         return retrieved_flower
 
     def click_to_close(self, mouse_position):
+        isClosed = False
         if (self.flower_information_box != None) and self.flower_information_box.is_visible:
             if self.flower_information_box.check_exit_button_click(mouse_position):
                 self.flower_information_box.is_visible = False
                 self.hovered_flower = None
+                isClosed = True
+        return isClosed
+
 
     
     def load_flowers_from_database(self):
@@ -218,4 +222,38 @@ class FlowerInformationBox:
         if((self.box_x_position + self.info_box_width - 25 <= x <= self.box_x_position + self.info_box_width) and (self.box_y_position + 5 <= y <= self.box_y_position + 25)):
             return True
         return False
+    
+
+class gardenFlower:
+    
+    def __init__(self, x, y, w, h, flower):
+        self.flower = flower
+        self.rect = py.Rect(x, y, w, h)
+        self.isMoving = False
+        self.offsetX = 0
+        self.offsetY = 0
+
+    def handleEvent(self, event):
+        if event.type == py.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.rect.collidepoint(event.pos):
+                    self.isMoving = True
+                    mouseX, mouseY = event.pos
+                    self.offsetX = self.rect.x - mouseX
+                    self.offsetY = self.rect.y - mouseY
+
+        elif event.type == py.MOUSEBUTTONUP:
+            if event.button == 1:
+                self.isMoving = False
+        
+        if event.type == py.MOUSEMOTION:
+            if self.isMoving:
+                mouseX, mouseY = event.pos
+                self.rect.x = mouseX + self.offsetX
+                self.rect.y = mouseY + self.offsetY
+
+    def draw(self, screen):
+        py.draw.rect(screen, MEDIUM_GREEN, self.rect)
+
+
 

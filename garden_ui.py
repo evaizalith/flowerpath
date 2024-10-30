@@ -1,11 +1,17 @@
 import pygame as py
+from constants_config import *
+from plant import Plant
 
 class ClickBox:
 
-    def __init__(self, x, y, w, h):
+    def __init__(self, x, y, w, h, fullSun = True, partialShade = False, fullShade = False, droughtRes = 0):
         self.rect = py.Rect(x, y, w, h)
         self.color = (0, 0, 0)
         self.fill = False
+        self.fullSun = fullSun
+        self.partialShade = partialShade
+        self.fullShade = fullShade
+        self.droughtRes = droughtRes
 
     def handleEvent(self, event):
         if event.type == py.MOUSEBUTTONDOWN:
@@ -16,7 +22,51 @@ class ClickBox:
         if self.fill:
             py.draw.rect(screen, (0, 0, 0), self.rect)
         else:
-            py.draw.rect(screen, (0, 0, 0), self.rect, 1) 
+            py.draw.rect(screen, (0, 0, 0), self.rect, 1)
+
+    """ 
+    Logic for via draw:
+    viability starts at 0 (neutral), and can become 1 (good) or -1 (bad)
+    A neutral cell passes no good or bad check
+    if cell drought resistance is not neutral, compare resistance.
+    if it matches, viability becomes 1, if not, viability becomes -1
+    if viability is not failed, check sun level.
+    If sun level matches anywhere, viability becomes 1 (if not already)
+    If there are no matches, compare opposites.
+    If an opposite exists, viability becomes -1.
+    Boxes are drawn green for viable and red for not viable.
+    Neutral boxes are drawn the same as normal.
+    """   
+    def viabilityDraw(self, screen, selectedFlower):
+        viability = 0
+        if not self.droughtRes == 0:
+            if self.droughtRes == selectedFlower.droughtTolerant:
+                viability = 1
+            else: 
+                viability = -1
+        if not viability == -1:
+            if self.fullSun == True and selectedFlower.fullSun == True:
+                viability = 1
+            elif self.partialShade == True and selectedFlower.partialShade == True:
+                viability = 1
+            elif self.fullShade == True and selectedFlower.fullShade == True:
+                viability = 1
+        if not viability == 1:
+            if self.fullSun == True and selectedFlower.fullShade == True:
+                viability == -1
+            if self.fullShade == True and selectedFlower.fullSun == True:
+                viability = -1
+        match viability:
+            case 1:
+                py.draw.rect(screen, DARK_GREEN, self.rect)
+            case 0:
+                py.draw.rect(screen, PURE_BLACK, self.rect, 3)
+            case -1:
+                py.draw.rect(screen, DARK_RED, self.rect)
+            case _:
+                py.draw.rect(screen, PURE_BLACK, self.rect, 1)
+            
+                
 
 class TextBox:
 
@@ -43,25 +93,24 @@ class TextBox:
                 if event.key == py.K_BACKSPACE:
                     self.text = self.text[:-1]
                 elif event.key == py.K_RETURN: #enter
+                    # 1ft = 30 pixels
+                    # max 10 ft, min 3 ft
                     if self.text.isdigit():
-                        sizeInt = int(self.text)
-                        if sizeInt > 550:
+                        sizeInt = int(self.text) * 60
+                        if sizeInt > 600:
                             sizeInt = 600
-                            self.text = "550"
-                        if sizeInt < 100:
-                            sizeInt = 100
-                            self.text = "100"
+                            self.text = "10"
+                        if sizeInt < 180:
+                            sizeInt = 180
+                            self.text = "3"
                         self.direction = sizeInt
                         self.rescaleToggle = True
                     else:
                         print("Invalid integer!")
                 else:
-                    self.text += event.unicode
+                    if len(self.text) < 8:
+                        self.text += event.unicode
                 self.textSurface = py.font.Font(None, 32).render(self.text, True, (0, 0, 0))
-
-    def update(self):
-        width = max(140, self.textSurface.get_width() + 10)
-        self.rect.w = width
 
     def draw(self, screen):
         screen.blit(self.textSurface, (self.rect.x + 5, self.rect.y + 5))
