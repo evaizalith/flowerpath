@@ -75,7 +75,21 @@ if __name__ == "__main__":
     success, error = db.connect()
     print(f"db.connect() return: {success},{error}")
 
-    plant = plant.Plant("testPlant", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    plant = plant.Plant("testPlant", 
+                        0, #max height
+                        0, #max size
+                        0, #germination time
+                        0, #mature time
+                        0, #bloom time
+                        0, #bloom start
+                        0, #bloom end
+                        1, #full sun
+                        0, #Partial shade
+                        0, #full shade
+                        0, #drought tolerant
+                        0, #overwater sensitive
+                        0, #color
+                        0) #perennial
 
     value, err = db.fetch("testPlant")
     print(f"db has: {value}, Err: {err}")
