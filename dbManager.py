@@ -1,11 +1,13 @@
 import sqlite3
-import plant
+import plant as p 
+import re
 
 class databaseManager():
     def __init__(self, database):
         self.database = database
         self.cursor = None
         self.connection = None
+        self.validation = re.compile("[\w\s\-]+")
 
     def connect(self):
         success = True
@@ -27,6 +29,8 @@ class databaseManager():
         fetch = []
         result = []
         err = None
+
+        plantName = self.validation.match(plantName).group(0)
 
         try:
             fetch = self.cursor.execute(f"SELECT * FROM Plants WHERE Name=\"{plantName}\"")
@@ -55,6 +59,8 @@ class databaseManager():
         success = True
         err = None
 
+        plantName = self.validation.match(plantName).group(0)
+
         try:
             self.cursor.execute(f"DELETE FROM Plants WHERE name = '{plantName}'")
             self.connection.commit()
@@ -77,7 +83,7 @@ if __name__ == "__main__":
     success, error = db.connect()
     print(f"db.connect() return: {success},{error}")
 
-    plant = plant.Plant("testPlant", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    plant = p.Plant("testPlant", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     value, err = db.fetch("testPlant")
     print(f"db has: {value}, Err: {err}")
@@ -91,5 +97,17 @@ if __name__ == "__main__":
     print(f"db.remove(testPlant): {value}, Err: {err}")
     value, err = db.fetch("testPlant")
     print(f"db.fetch(testPlant): {value}, Err: {err}")
+
+    # test input validation
+    value, err = db.add(plant)
+    print(f"db.add(testPlant): {value}, Err: {err}")
+    value, err = db.remove("testPlant;")
+    print(f"db.remove(testPlant;): {value}, Err: {err}")
+
+    newPlant = p.Plant("testPlant;///++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    value, err = db.add(newPlant)
+    print(f"db.add(testPlant;///++): {value}, Err: {err}")
+    value, err = db.remove("testPlant;///++")
+    print(f"db.remove(testPlant;///++): {value}, Err {err}")
 
     db.close()
