@@ -59,14 +59,13 @@ class Game(object):
         # Actually switches to the next game state and passes persistent data to the new state
         current_state = self.state_name
         next_state = self.state.next_state
-        # Marks the screen as NOT done before transitioning, so a return to that screen will not cause immediate exit
+        #self.done controls swithcing screens
         self.state.done = False
         self.state_name = next_state
         self.state = self.states[self.state_name]
         self.state.startup(self.states[current_state].persist)
 
     def update(self, dt):
-        # Increment the idle timer by the elapsed time (dt)
         self.idle_timer += (dt / 1000)
         print(f"Idle Timer: {self.idle_timer:.2f} seconds")
 
@@ -117,13 +116,13 @@ class ResumeButton:
         self.font = py.font.SysFont('georgia', 36)
 
     def render(self, surface):
-        button_rect = py.Rect(self.box_x_position, self.box_y_position, self.info_box_width, self.info_box_height)
-        button_color = MEDIUM_GREEN 
-        py.draw.rect(surface, button_color, button_rect, border_radius=20)
+        resume_rect_background = py.Rect(self.box_x_position, self.box_y_position, self.info_box_width, self.info_box_height)
+        resume_rect_color = MEDIUM_GREEN 
+        py.draw.rect(surface, resume_rect_color, resume_rect_background, border_radius=20)
 
-        button_text = self.font.render("Resume", True, WARM_SOFT_WHITE)
-        button_text_rect = button_text.get_rect(center=button_rect.center)
-        surface.blit(button_text, button_text_rect)
+        resume_button_text = self.font.render("Resume", True, WARM_SOFT_WHITE)
+        resume_text_rect = resume_button_text.get_rect(center=resume_rect_background.center)
+        surface.blit(resume_button_text, resume_text_rect)
 
     def check_resume_button_click(self, mouse_position):
         x, y = mouse_position
@@ -138,13 +137,13 @@ class IdleNotification:
         self.font = py.font.SysFont('georgia', 24)
 
     def render(self, surface):
-        notification_rect = py.Rect(self.box_x_position, self.box_y_position, self.info_box_width, self.info_box_height)
-        notification_color = MEDIUM_GREEN
-        py.draw.rect(surface, notification_color, notification_rect, border_radius=10)
+        idle_notification_rect = py.Rect(self.box_x_position, self.box_y_position, self.info_box_width, self.info_box_height)
+        idle_notification_color = MEDIUM_GREEN
+        py.draw.rect(surface, idle_notification_color, idle_notification_rect, border_radius=10)
 
-        notification_text = self.font.render("Idle timeout in 5 seconds...", True, WARM_SOFT_WHITE)
-        notification_text_rect = notification_text.get_rect(center=notification_rect.center)
-        surface.blit(notification_text, notification_text_rect)
+        idle_notification_text = self.font.render("Idle timeout in 5 seconds...", True, WARM_SOFT_WHITE)
+        notification_text_rect = idle_notification_text.get_rect(center=idle_notification_rect.center)
+        surface.blit(idle_notification_text, notification_text_rect)
 
 class IncorrectPasswordNotification:
     def __init__(self, box_x_position=300, box_y_position=100, info_box_width=400, info_box_height=50):
@@ -155,13 +154,13 @@ class IncorrectPasswordNotification:
         self.font = py.font.SysFont('georgia', 24)
 
     def render(self, surface):
-        notification_rect = py.Rect(self.box_x_position, self.box_y_position, self.info_box_width, self.info_box_height)
-        notification_color = PURE_WHITE
-        py.draw.rect(surface, notification_color, notification_rect, border_radius=10)
+        incorrect_password_notification = py.Rect(self.box_x_position, self.box_y_position, self.info_box_width, self.info_box_height)
+        incorrect_notification_color = PURE_WHITE
+        py.draw.rect(surface, incorrect_notification_color, incorrect_password_notification, border_radius=10)
 
-        notification_text = self.font.render("Incorrect password. Try again.", True, PURE_BLACK)
-        notification_text_rect = notification_text.get_rect(center=notification_rect.center)
-        surface.blit(notification_text, notification_text_rect)
+        incorrect_password_notification_text = self.font.render("Incorrect password. Try again.", True, PURE_BLACK)
+        incorrect_notification_text_rect = incorrect_password_notification_text.get_rect(center=incorrect_password_notification.center)
+        surface.blit(incorrect_password_notification_text, incorrect_notification_text_rect)
 
 class PasswordInput:
     def __init__(self, box_x_position, box_y_position, box_width, box_height, correct_password="1234"):
@@ -174,21 +173,21 @@ class PasswordInput:
         self.font = py.font.SysFont('georgia', 36)
 
     def render(self, surface):
-        background_rect = py.Rect(self.box_x_position - 50, self.box_y_position - 75, self.box_width + 100, self.box_height + 100)
-        background_rect_color = MEDIUM_GREEN
-        py.draw.rect(surface, background_rect_color, background_rect, border_radius=20)
+        password_background_rect = py.Rect(self.box_x_position - 50, self.box_y_position - 75, self.box_width + 100, self.box_height + 100)
+        password_rect_color = MEDIUM_GREEN
+        py.draw.rect(surface, password_rect_color, password_background_rect, border_radius=20)
 
-        background_rect_text = self.font.render("Enter password:", True, WARM_SOFT_WHITE)
-        background_rect_rect = background_rect_text.get_rect(topleft=(background_rect.x + 30, background_rect.y + 10))
-        surface.blit(background_rect_text, background_rect_rect)
+        password_prompt_text = self.font.render("Enter password:", True, WARM_SOFT_WHITE)
+        password_prompt_rect = password_prompt_text.get_rect(topleft=(password_prompt_text.x + 30, password_prompt_text.y + 10))
+        surface.blit(password_prompt_text, password_prompt_rect)
 
-        input_rect = py.Rect(self.box_x_position, self.box_y_position, self.box_width, self.box_height)
-        input_color = WARM_SOFT_WHITE
-        py.draw.rect(surface, input_color, input_rect, border_radius=10)
+        password_input_rect = py.Rect(self.box_x_position, self.box_y_position, self.box_width, self.box_height)
+        password_input_color = WARM_SOFT_WHITE
+        py.draw.rect(surface, password_input_color, password_input_rect, border_radius=10)
 
-        input_text = self.font.render(self.user_input_text, True, PURE_BLACK)
-        input_text_rect = input_text.get_rect(midleft=(input_rect.x + 10, input_rect.centery))
-        surface.blit(input_text, input_text_rect)
+        password_input_text = self.font.render(self.user_input_text, True, PURE_BLACK)
+        password_input_text_rect = password_input_text.get_rect(midleft=(password_input_text.x + 10, password_input_text.centery))
+        surface.blit(password_input_text, password_input_text_rect)
 
     def check_click(self, mouse_position):
         x, y = mouse_position
