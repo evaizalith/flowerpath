@@ -32,7 +32,7 @@ class Plant():
     # Retrieves a texture given id
     # Returns a null texture if unable to find it
     # Returns null value if unable to find null texure
-    def getTexture(textureID : int)
+    def getTexture(textureID : int):
         texture = None
         path = None
         err = None
@@ -52,15 +52,15 @@ class Plant():
         
         try:
             texture = py.image.load(path).convert_alpha()
-        except pygame.error, e:
+        except pygame.error as e:
             print(f"Error loading texture {path}")
-            err = e
+            err = e2
 
-        if not err = None:
+        if err != None:
             try: 
                 texture = py.image.load(nullTexture).convert_alpha()
 
-            except pygame.error, e:
+            except pygame.error as e:
                 print("Error loading null texture")
                 return None
 
