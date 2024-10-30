@@ -1,4 +1,3 @@
-
 from screen_title import TitleScreen
 from screen_main import MainPage
 from state_manager import Game

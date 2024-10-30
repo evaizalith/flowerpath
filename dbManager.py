@@ -42,6 +42,20 @@ class databaseManager():
             err = e 
 
         return result, err 
+    
+    def fetch_all(self):
+        fetch = [] 
+        result = [] 
+        err = None 
+
+        try:
+            fetch = self.cursor.execute("SELECT * FROM Plants")
+            result = fetch.fetchall()
+        except sqlite3.Error as e:
+            err = e
+
+        return result, err
+
         
     def add(self, plant):
         success = True
