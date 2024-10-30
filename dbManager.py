@@ -70,6 +70,36 @@ class databaseManager():
 
         return success, err
 
+    def printAll(self):
+        fetch = self.cursor.execute(f"SELECT * FROM Plants")
+
+        for item in fetch:
+            print({item})
+
+    def deleteAll(self):
+        success = True
+        err = None
+
+        try:
+            self.cursor.execute(f"DELETE FROM Plants")
+        except sqlite3.Error as e:
+            success = False
+            err = e
+
+        return success, err
+
+    def commit(self):
+        success = True
+        err = None
+
+        try:
+            self.connection.commit()
+        except sqlite3.Error as e:
+            success = False
+            err = e
+
+        return success, err
+
     def close(self):
         self.connection.close()
 
@@ -109,5 +139,13 @@ if __name__ == "__main__":
     print(f"db.add(testPlant;///++): {value}, Err: {err}")
     value, err = db.remove("testPlant;///++")
     print(f"db.remove(testPlant;///++): {value}, Err {err}")
+
+    print("Print all:")
+    db.printAll()
+    db.deleteAll()
+    print("Print all after deleteAll():")
+    db.printAll()
+
+    db.commit()
 
     db.close()
