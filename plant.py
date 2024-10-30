@@ -15,3 +15,22 @@ class Plant():
         self.overwaterSensitive = overwaterSensitive
         self.color = color
         self.perennial = perennial
+
+
+"""Schema of table Plants:
+(0, 'id', 'INTEGER', 0, None, 1)
+(1, 'name', 'VARCHAR', 0, None, 0)
+(2, 'maxHeight', 'INTEGER', 0, None, 0)
+(3, 'maxSize', 'INTEGER', 0, None, 0)
+(4, 'germinationTime', 'INTEGER', 0, None, 0)
+(5, 'matureTime', 'INTEGER', 0, None, 0)
+(6, 'bloomTime', 'INTEGER', 0, None, 0)
+(7, 'bloomStart', 'INTEGER', 0, None, 0)
+(8, 'bloomEnd', 'INTEGER', 0, None, 0)
+(9, 'fullSun', 'BOOLEAN', 0, None, 0)
+(10, 'partialShade', 'BOOLEAN', 0, None, 0)
+(11, 'fullShade', 'BOOLEAN', 0, None, 0)
+(12, 'droughtTolerant', 'INTEGER', 0, None, 0)
+(13, 'overwaterSensitive', 'BOOLEAN', 0, None, 0)
+(14, 'color', 'VARCHAR', 0, None, 0)
+(15, 'perennial', 'BOOLEAN', 0, None, 0)"""

@@ -1,11 +1,14 @@
 import pygame as py
+from dbManager import databaseManager
 from flower_placeholder import Flower
+from plant import Plant
 from constants_config import *
 
 
 class FlowerSelectionUI:
-    def __init__(self, position=(50,50)):
-        self.flowers = [Flower("Calendula"), Flower("Zinna"), Flower("Foxglove"), Flower("Nasturtium"), Flower("Annual Phlox"), Flower("Viola"), Flower("Snapdragon"), Flower("Cosmos"), Flower("Sweet Pea"), Flower("Baby's Breath"), Flower("Marigold"), Flower("Milkweed"), Flower("Larkspur"), Flower("Bleeding Heart"), Flower("Hostas"), Flower("Coral Bells")]
+    def __init__(self, position=(50,50), dp_path="test"):
+        self.db_manager_connection_success = False
+        #[Flower("Calendula"), Flower("Zinna"), Flower("Foxglove"), Flower("Nasturtium"), Flower("Annual Phlox"), Flower("Viola"), Flower("Snapdragon"), Flower("Cosmos"), Flower("Sweet Pea"), Flower("Baby's Breath"), Flower("Marigold"), Flower("Milkweed"), Flower("Larkspur"), Flower("Bleeding Heart"), Flower("Hostas"), Flower("Coral Bells")]
         self.position = position
         self.window_x_size = 20
         self.window_y_size = 40
@@ -15,9 +18,25 @@ class FlowerSelectionUI:
         self.attached_image = py.image.load("placeholders_assets/pinkflower.jpg").convert_alpha()
         self.hovered_flower = None
         self.flower_information_box = None
+        self.user_selected_flower = None
+
+        self.db_manager = databaseManager("test")
+        #Add 'crash gracefully' feature later 
+
+        success, err = self.db_manager.connect()
+
+        if not success:
+            self.db_manager_connection_success = False
+            print(f"Error connecting to database: {err}")
+            
+        else: 
+            print("Connected to database successfully")
+            self.db_manager_connection_success = True
+            self.flowers = self.load_flowers_from_database() 
+
 
     #This is the thing you call to get it on the main page
-    def render(self, surface, mouse_position):
+    def render(self, surface, mouse_position, mouse_click):
         font = py.font.Font(None, 24)
         first_column = len(self.flowers) // 2
         for i, flower in enumerate(self.flowers[:first_column]):
@@ -32,6 +51,10 @@ class FlowerSelectionUI:
             else:
                 button.set_hovered(False)
 
+            get_selected_flower = button.get_flower(mouse_position, mouse_click)
+            if get_selected_flower:
+                print(f"Selected flower: {get_selected_flower.name}")
+
         for i, flower in enumerate(self.flowers[first_column:]):
             flower_x_position = self.window_x_size + self.column_separation_margin
             flower_y_position = self.window_y_size + i * self.button_vertical_spacing
@@ -40,20 +63,62 @@ class FlowerSelectionUI:
         
             if button.check_if_hovered(mouse_position):
                 self.hovered_flower = flower
+                button.set_hovered(True)
+            else:
+                button.set_hovered(False)
+
+            get_selected_flower = button.get_flower(mouse_position, mouse_click)
+            if get_selected_flower:
+                self.user_selected_flower = get_selected_flower
 
         if self.hovered_flower:
             self.flower_information_box = FlowerInformationBox(surface, self.hovered_flower)
             self.flower_information_box.is_visible = True
             self.flower_information_box.render(surface)
 
-    
+    #------------- This is the implementation of the getter for main page ----- This returns the current flower!!!!!!
+    def get_current_flower(self):
+        retrieved_flower = self.user_selected_flower
+        self.user_selected_flower = None
+        return retrieved_flower
+
     def click_to_close(self, mouse_position):
         if (self.flower_information_box != None) and self.flower_information_box.is_visible:
             if self.flower_information_box.check_exit_button_click(mouse_position):
                 self.flower_information_box.is_visible = False
                 self.hovered_flower = None
 
+    
+    def load_flowers_from_database(self):
+        flowers = []
+        if self.db_manager_connection_success:
+            all_flowers, err = self.db_manager.fetch_all()
+            if err:
+                print(f"Error fetching flowers from database: {err}")
+            else:
+                for flower in all_flowers:
+                    name = flower[1]
+                    max_height = flower[2]
+                    max_size = flower[3]
+                    germination_time = flower[4]
+                    mature_time = flower[5]
+                    bloom_time = flower[6]
+                    bloom_start = flower[7]
+                    bloom_end = flower[8]
+                    full_sun = flower[9]
+                    partial_shade = flower[10] 
+                    full_shade = flower[11]
+                    drought_tolerant = flower[12]
+                    overwater_sensitive = flower[13]
+                    color = flower[14]
+                    perennial = flower[15]
 
+                    plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial)
+                    flowers.append(plant)
+
+        return flowers
+    
+                
 class CertainFlowerButton: 
     def __init__(self, flower, button_x_position, button_y_position):
         self.flower = flower
@@ -97,6 +162,12 @@ class CertainFlowerButton:
     
     def set_hovered(self, hovered):
         self.is_hovered = hovered
+    
+    #This is a getter that we will use to get the flower 
+    def get_flower(self, mouse_position, mouse_click):
+        if self.check_if_hovered(mouse_position) and mouse_click:
+            return self.flower
+        return None
 
 
 class FlowerInformationBox:

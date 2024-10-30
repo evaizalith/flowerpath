@@ -11,10 +11,12 @@ class MainPage(GameState):
         super(MainPage, self).__init__()
         self.next_state = "TITLE"
         self.flower_selection_ui = FlowerSelectionUI(position=(100, 200))
+        self.left_mouse_click = False
         self.rectX = 200
         self.rectY = 75
         self.rectSizeX = 500
         self.rectSizeY = 200
+        self.user_selected_flower = None
         
         self.textbox1 = TextBox(200, 15, 140, 32, self.rectSizeX)
         self.textbox2 = TextBox(390, 15, 140, 32, self.rectSizeY)
@@ -35,13 +37,21 @@ class MainPage(GameState):
         
 
     def get_event(self, event):
+        self.left_mouse_click = False
         if event.type == py.QUIT:
             self.quit = True
         elif event.type == py.MOUSEBUTTONDOWN:
             self.title_rect.center = event.pos
             mouse_position = py.mouse.get_pos()
+            self.left_mouse_click = True
             print("mouse button down detected")
             self.flower_selection_ui.click_to_close(mouse_position)
+
+        #holds current flower selection - this is the getter
+        #Returns plant object 
+            user_selected_flower = self.flower_selection_ui.get_current_flower()
+            if user_selected_flower:
+                print(f"User selected flower on the main page: {user_selected_flower.name}")
 
         for box in self.textboxes:
             box.handleEvent(event)
@@ -78,5 +88,7 @@ class MainPage(GameState):
         for cell in self.cells:
             cell.draw(surface)
         mouse_position = py.mouse.get_pos()
-        self.flower_selection_ui.render(surface, mouse_position)
+        self.flower_selection_ui.render(surface, mouse_position, self.left_mouse_click)
+
+
             
