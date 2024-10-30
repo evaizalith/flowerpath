@@ -27,13 +27,15 @@ class ClickBox:
     """ 
     Logic for via draw:
     viability starts at 0 (neutral), and can become 1 (good) or -1 (bad)
+    A neutral cell passes no good or bad check
     if cell drought resistance is not neutral, compare resistance.
     if it matches, viability becomes 1, if not, viability becomes -1
     if viability is not failed, check sun level.
     If sun level matches anywhere, viability becomes 1 (if not already)
-    If there are no matches, viability becomes -1
+    If there are no matches, compare opposites.
+    If an opposite exists, viability becomes -1.
     Boxes are drawn green for viable and red for not viable.
-    Neutral boxes are drawn the same
+    Neutral boxes are drawn the same as normal.
     """   
     def viabilityDraw(self, screen, selectedFlower):
         viability = 0
@@ -43,13 +45,16 @@ class ClickBox:
             else: 
                 viability = -1
         if not viability == -1:
-            if selectedFlower.fullSun == True and self.fullSun == True:
+            if self.fullSun == True and selectedFlower.fullSun == True:
                 viability = 1
             elif self.partialShade == True and selectedFlower.partialShade == True:
                 viability = 1
             elif self.fullShade == True and selectedFlower.fullShade == True:
                 viability = 1
-            else:
+        if not viability == 1:
+            if self.fullSun == True and selectedFlower.fullShade == True:
+                viability == -1
+            if self.fullShade == True and selectedFlower.fullSun == True:
                 viability = -1
         match viability:
             case 1:
@@ -88,25 +93,24 @@ class TextBox:
                 if event.key == py.K_BACKSPACE:
                     self.text = self.text[:-1]
                 elif event.key == py.K_RETURN: #enter
+                    # 1ft = 30 pixels
+                    # max 10 ft, min 3 ft
                     if self.text.isdigit():
-                        sizeInt = int(self.text)
-                        if sizeInt > 550:
+                        sizeInt = int(self.text) * 60
+                        if sizeInt > 600:
                             sizeInt = 600
-                            self.text = "550"
-                        if sizeInt < 100:
-                            sizeInt = 100
-                            self.text = "100"
+                            self.text = "10"
+                        if sizeInt < 180:
+                            sizeInt = 180
+                            self.text = "3"
                         self.direction = sizeInt
                         self.rescaleToggle = True
                     else:
                         print("Invalid integer!")
                 else:
-                    self.text += event.unicode
+                    if len(self.text) < 8:
+                        self.text += event.unicode
                 self.textSurface = py.font.Font(None, 32).render(self.text, True, (0, 0, 0))
-
-    def update(self):
-        width = max(140, self.textSurface.get_width() + 10)
-        self.rect.w = width
 
     def draw(self, screen):
         screen.blit(self.textSurface, (self.rect.x + 5, self.rect.y + 5))

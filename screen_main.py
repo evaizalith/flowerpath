@@ -1,7 +1,7 @@
 import pygame as py 
 from abstract_screen import GameState
 from flower_placeholder import Flower
-from flower_selection_ui import FlowerSelectionUI
+from flower_selection_ui import FlowerSelectionUI, gardenFlower
 from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum
 from constants_config import *
 
@@ -14,15 +14,16 @@ class MainPage(GameState):
         self.left_mouse_click = False
         self.rectX = 200
         self.rectY = 75
-        self.rectSizeX = 500
-        self.rectSizeY = 200
+        self.rectSizeX = 510
+        self.rectSizeY = 190
         self.user_selected_flower = None
         self.drawViable = False
         
-        self.textbox1 = TextBox(200, 15, 140, 32, self.rectSizeX)
-        self.textbox2 = TextBox(390, 15, 140, 32, self.rectSizeY)
+        self.textbox1 = TextBox(200, 15, 140, 32, self.rectSizeX, "9")
+        self.textbox2 = TextBox(390, 15, 140, 32, self.rectSizeY, "4")
         self.textboxes = [self.textbox1, self.textbox2]
         self.cells = []
+        self.flowers = []
         self.rowNum = 5
         self.colNum = 5
         rescale(self, self.rowNum, self.colNum, self.cells)
@@ -54,6 +55,7 @@ class MainPage(GameState):
                 print(f"User selected flower on the main page: {user_selected_flower.name}")
                 self.drawViable = True
                 self.user_selected_flower = user_selected_flower
+                self.flowers.append(gardenFlower(self.rectX + (self.rectSizeX/2), self.rectY + (self.rectSizeY/2), 15, 15, user_selected_flower))
 
             isClosed = self.flower_selection_ui.click_to_close(mouse_position)
             if isClosed:
@@ -62,12 +64,13 @@ class MainPage(GameState):
 
         for box in self.textboxes:
             box.handleEvent(event)
-            box.update()
             if box.rescaleToggle:
                 rescaleCellNum(self, self.rowNum, self.colNum, self.cells)
                 box.rescaleToggle = False
         for cell in self.cells:
             cell.handleEvent(event)
+        for flower in self.flowers:
+            flower.handleEvent(event)
         if event.type == py.KEYDOWN:
             if event.key == py.K_UP:
                 if(self.colNum > 1):
@@ -98,6 +101,8 @@ class MainPage(GameState):
                 cell.viabilityDraw(surface, self.user_selected_flower)
             else:
                 cell.draw(surface)
+        for flower in self.flowers:
+            flower.draw(surface)
         mouse_position = py.mouse.get_pos()
         self.flower_selection_ui.render(surface, mouse_position, self.left_mouse_click)
 

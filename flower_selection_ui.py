@@ -175,7 +175,7 @@ class CertainFlowerButton:
 
 
 class FlowerInformationBox:
-    def __init__(self, surface, hovered_flower, box_x_position=15, box_y_position=620, outline_width=10, info_box_width=975, info_box_height=150):
+    def __init__(self, surface, hovered_flower, box_x_position=15, box_y_position=680, outline_width=10, info_box_width=975, info_box_height=100):
         self.info_box_width = info_box_width
         self.info_box_height = info_box_height
         self.box_x_position = box_x_position
@@ -216,4 +216,38 @@ class FlowerInformationBox:
         if((self.box_x_position + self.info_box_width - 25 <= x <= self.box_x_position + self.info_box_width) and (self.box_y_position + 5 <= y <= self.box_y_position + 25)):
             return True
         return False
+    
+
+class gardenFlower:
+    
+    def __init__(self, x, y, w, h, flower):
+        self.flower = flower
+        self.rect = py.Rect(x, y, w, h)
+        self.isMoving = False
+        self.offsetX = 0
+        self.offsetY = 0
+
+    def handleEvent(self, event):
+        if event.type == py.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.rect.collidepoint(event.pos):
+                    self.isMoving = True
+                    mouseX, mouseY = event.pos
+                    self.offsetX = self.rect.x - mouseX
+                    self.offsetY = self.rect.y - mouseY
+
+        elif event.type == py.MOUSEBUTTONUP:
+            if event.button == 1:
+                self.isMoving = False
+        
+        if event.type == py.MOUSEMOTION:
+            if self.isMoving:
+                mouseX, mouseY = event.pos
+                self.rect.x = mouseX + self.offsetX
+                self.rect.y = mouseY + self.offsetY
+
+    def draw(self, screen):
+        py.draw.rect(screen, MEDIUM_GREEN, self.rect)
+
+
 
