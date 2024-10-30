@@ -7,7 +7,10 @@ class databaseManager():
         self.database = database
         self.cursor = None
         self.connection = None
+
+        # Used for validating inputs
         self.validation = re.compile("[\w\s\-]+")
+        self.intVal = re.compile("\d+")
 
     def connect(self):
         success = True
@@ -21,7 +24,7 @@ class databaseManager():
 
         if (success):
             self.cursor = self.connection.cursor()
-            self.cursor.execute("CREATE TABLE IF NOT EXISTS Plants(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, maxHeight INTEGER, maxSize INTEGER, germinationTime INTEGER, matureTime INTEGER, bloomTime INTEGER, bloomStart INTEGER, bloomEnd INTEGER, fullSun BOOLEAN, partialShade BOOLEAN, fullShade BOOLEAN, droughtTolerant INTEGER, overwaterSensitive BOOLEAN, color VARCHAR, perennial BOOLEAN)")
+            self.cursor.execute("CREATE TABLE IF NOT EXISTS Plants(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, maxHeight INTEGER, maxSize INTEGER, germinationTime INTEGER, matureTime INTEGER, bloomTime INTEGER, bloomStart INTEGER, bloomEnd INTEGER, fullSun BOOLEAN, partialShade BOOLEAN, fullShade BOOLEAN, droughtTolerant INTEGER, overwaterSensitive BOOLEAN, color VARCHAR, perennial BOOLEAN, texture0 VARCHAR, texture1 VARCHAR, texture2 VARCHAR, texture3 VARCHAR)")
 
         return success, err
 
@@ -45,7 +48,7 @@ class databaseManager():
         err = None
 
         try:
-            self.cursor.execute(f"INSERT INTO Plants(name, maxHeight, maxSize, germinationTime, matureTime, bloomTime, bloomStart, bloomEnd, fullSun, partialShade, fullShade, droughtTolerant, overwaterSensitive, color, perennial) VALUES ('{plant.name}', '{plant.maxHeight}', '{plant.maxSize}', '{plant.germinationTime}', '{plant.matureTime}', '{plant.bloomTime}', '{plant.bloomStart}', '{plant.bloomEnd}', '{plant.fullSun}', '{plant.partialShade}', '{plant.fullShade}', '{plant.droughtTolerant}', '{plant.overwaterSensitive}', '{plant.color}', '{plant.perennial}')")
+            self.cursor.execute(f"INSERT INTO Plants(name, maxHeight, maxSize, germinationTime, matureTime, bloomTime, bloomStart, bloomEnd, fullSun, partialShade, fullShade, droughtTolerant, overwaterSensitive, color, perennial) VALUES ('{plant.name}', '{plant.maxHeight}', '{plant.maxSize}', '{plant.germinationTime}', '{plant.matureTime}', '{plant.bloomTime}', '{plant.bloomStart}', '{plant.bloomEnd}', '{plant.fullSun}', '{plant.partialShade}', '{plant.fullShade}', '{plant.droughtTolerant}', '{plant.overwaterSensitive}', '{plant.color}', '{plant.perennial}', '{plant.texture1}', '{plant.texture2}', '{plant.texture3}')")
         except sqlite3.Error as e:
             success = False 
             err = e 
@@ -70,12 +73,16 @@ class databaseManager():
 
         return success, err
 
+    # Prints every item in database
     def printAll(self):
         fetch = self.cursor.execute(f"SELECT * FROM Plants")
 
         for item in fetch:
             print({item})
 
+    # WARNING
+    # DELETES EVERY ITEM IN DATABASE
+    # Does not auto-save, call commit() if you want to save changes made via this function
     def deleteAll(self):
         success = True
         err = None
@@ -88,6 +95,7 @@ class databaseManager():
 
         return success, err
 
+    # Saves changes 
     def commit(self):
         success = True
         err = None
@@ -113,7 +121,7 @@ if __name__ == "__main__":
     success, error = db.connect()
     print(f"db.connect() return: {success},{error}")
 
-    plant = p.Plant("testPlant", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    plant = p.Plant("testPlant", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     value, err = db.fetch("testPlant")
     print(f"db has: {value}, Err: {err}")
@@ -134,7 +142,7 @@ if __name__ == "__main__":
     value, err = db.remove("testPlant;")
     print(f"db.remove(testPlant;): {value}, Err: {err}")
 
-    newPlant = p.Plant("testPlant;///++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    newPlant = p.Plant("testPlant;///++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     value, err = db.add(newPlant)
     print(f"db.add(testPlant;///++): {value}, Err: {err}")
     value, err = db.remove("testPlant;///++")
