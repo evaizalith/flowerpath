@@ -178,7 +178,7 @@ class PasswordInput:
         py.draw.rect(surface, password_rect_color, password_background_rect, border_radius=20)
 
         password_prompt_text = self.font.render("Enter password:", True, WARM_SOFT_WHITE)
-        password_prompt_rect = password_prompt_text.get_rect(topleft=(password_prompt_text.x + 30, password_prompt_text.y + 10))
+        password_prompt_rect = password_prompt_text.get_rect(topleft=(password_background_rect.x + 30, password_background_rect.y + 10))
         surface.blit(password_prompt_text, password_prompt_rect)
 
         password_input_rect = py.Rect(self.box_x_position, self.box_y_position, self.box_width, self.box_height)
@@ -186,7 +186,7 @@ class PasswordInput:
         py.draw.rect(surface, password_input_color, password_input_rect, border_radius=10)
 
         password_input_text = self.font.render(self.user_input_text, True, PURE_BLACK)
-        password_input_text_rect = password_input_text.get_rect(midleft=(password_input_text.x + 10, password_input_text.centery))
+        password_input_text_rect = password_input_text.get_rect(midleft=(password_input_rect.x + 10, password_input_rect.centery))
         surface.blit(password_input_text, password_input_text_rect)
 
     def check_click(self, mouse_position):
