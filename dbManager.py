@@ -51,6 +51,8 @@ class databaseManager():
         try:
             fetch = self.cursor.execute("SELECT * FROM Plants")
             result = fetch.fetchall()
+            if len(result) == 0:
+                print("Result in fetch_all is empty")
         except sqlite3.Error as e:
             err = e
 
@@ -62,7 +64,7 @@ class databaseManager():
         err = None
 
         try:
-            self.cursor.execute(f"INSERT INTO Plants(name, maxHeight, maxSize, germinationTime, matureTime, bloomTime, bloomStart, bloomEnd, fullSun, partialShade, fullShade, droughtTolerant, overwaterSensitive, color, perennial) VALUES ('{plant.name}', '{plant.maxHeight}', '{plant.maxSize}', '{plant.germinationTime}', '{plant.matureTime}', '{plant.bloomTime}', '{plant.bloomStart}', '{plant.bloomEnd}', '{plant.fullSun}', '{plant.partialShade}', '{plant.fullShade}', '{plant.droughtTolerant}', '{plant.overwaterSensitive}', '{plant.color}', '{plant.perennial}', '{plant.texture1}', '{plant.texture2}', '{plant.texture3}')")
+            self.cursor.execute(f"INSERT INTO Plants(name, maxHeight, maxSize, germinationTime, matureTime, bloomTime, bloomStart, bloomEnd, fullSun, partialShade, fullShade, droughtTolerant, overwaterSensitive, color, perennial, texture1, texture2, texture3) VALUES ('{plant.name}', '{plant.maxHeight}', '{plant.maxSize}', '{plant.germinationTime}', '{plant.matureTime}', '{plant.bloomTime}', '{plant.bloomStart}', '{plant.bloomEnd}', '{plant.fullSun}', '{plant.partialShade}', '{plant.fullShade}', '{plant.droughtTolerant}', '{plant.overwaterSensitive}', '{plant.color}', '{plant.perennial}', '{plant.texture1}', '{plant.texture2}', '{plant.texture3}')")
         except sqlite3.Error as e:
             success = False 
             err = e 
@@ -157,6 +159,9 @@ if __name__ == "__main__":
     value, err = db.fetch("testPlant")
     print(f"db has: {value}, Err: {err}")
 
+    print("The contents of the database are: ")
+    db.printAll()
+
     value, err = db.add(plant)
     print(f"db.add(testPlant): {value}, Err: {err}")
     value, err = db.fetch("testPlant")
@@ -181,7 +186,7 @@ if __name__ == "__main__":
 
     print("Print all:")
     db.printAll()
-    db.deleteAll()
+    #db.deleteAll()
     print("Print all after deleteAll():")
     db.printAll()
 
