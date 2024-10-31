@@ -178,7 +178,25 @@ if __name__ == "__main__":
     value, err = db.remove("testPlant;")
     print(f"db.remove(testPlant;): {value}, Err: {err}")
 
-    newPlant = p.Plant("testPlant;///++", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    newPlant = p.Plant("testPlant;///++", 
+                        0, #max height
+                        0, #max size
+                        0, #germination time
+                        0, #mature time
+                        0, #bloom time
+                        0, #bloom start
+                        0, #bloom end
+                        1, #full sun
+                        0, #Partial shade
+                        0, #full shade
+                        0, #drought tolerant
+                        0, #overwater sensitive
+                        0, #color
+                        0, #perennial
+                        0, #texture1
+                        0, #texture2
+                        0) #texture3
+
     value, err = db.add(newPlant)
     print(f"db.add(testPlant;///++): {value}, Err: {err}")
     value, err = db.remove("testPlant;///++")

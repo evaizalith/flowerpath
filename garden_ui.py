@@ -60,7 +60,7 @@ class ClickBox:
             case 1:
                 py.draw.rect(screen, DARK_GREEN, self.rect)
             case 0:
-                py.draw.rect(screen, PURE_BLACK, self.rect, 3)
+                py.draw.rect(screen, PURE_BLACK, self.rect, 1)
             case -1:
                 py.draw.rect(screen, DARK_RED, self.rect)
             case _:
