@@ -99,6 +99,8 @@ class FlowerSelectionUI:
             all_flowers, err = self.db_manager.fetch_all()
             if err:
                 print(f"Error fetching flowers from database: {err}")
+            elif len(all_flowers) == 0:
+                print(f"No flowers were retreived from the database")
             else:
                 for flower in all_flowers:
                     name = flower[1]
@@ -122,6 +124,7 @@ class FlowerSelectionUI:
 
                     plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial, texture1, texture2, texture3)
                     flowers.append(plant)
+                    print("Plant" + plant.name + "was appended")
 
         return flowers
     
