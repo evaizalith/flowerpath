@@ -241,6 +241,12 @@ class gardenFlower:
         self.offsetX = 0
         self.offsetY = 0
         self.collide = False
+        self.image = None
+        self.image_path = "placeholders_assets/pinkflower.jpg"
+
+        if self.image_path:
+            self.image = py.image.load(self.image_path).convert_alpha()
+            self.image = py.transform.scale(self.image, (self.rect.width, self.rect.height))
 
     def handleEvent(self, event):
         if event.type == py.MOUSEBUTTONDOWN:
@@ -269,6 +275,9 @@ class gardenFlower:
         else:
             py.draw.rect(screen, MEDIUM_BLUE, self.maxRect, 1)
         py.draw.rect(screen, MEDIUM_GREEN, self.rect)
+
+        if self.image:
+            screen.blit(self.image, (self.rect.x, self.rect.y))
         
 
 
