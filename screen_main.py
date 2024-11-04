@@ -55,7 +55,7 @@ class MainPage(GameState):
                 print(f"User selected flower on the main page: {user_selected_flower.name}")
                 self.drawViable = True
                 self.user_selected_flower = user_selected_flower
-                self.flowers.append(gardenFlower(self.rectX + (self.rectSizeX/2), self.rectY + (self.rectSizeY/2), 15, 15, user_selected_flower))
+                self.flowers.append(gardenFlower(self.rectX + (self.rectSizeX/2), self.rectY + (self.rectSizeY/2), user_selected_flower))
 
             isClosed = self.flower_selection_ui.click_to_close(mouse_position)
             if isClosed:
@@ -91,6 +91,15 @@ class MainPage(GameState):
 
     
     def draw(self, surface):
+        #collision in the draw loop! Sorgy...
+        for flower1 in self.flowers:
+            flower1.collide = False
+            for flower2 in self.flowers:
+                # makes sure they aren't the same
+                # just using flower1 == flower2 doesn't work for whatever reason, haha!
+                if not flower1.maxRect == flower2.maxRect:
+                    if flower1.maxRect.colliderect(flower2.maxRect):
+                        flower1.collide = True
         surface.fill(self.screen_color)
         surface.blit(self.text, self.title_rect)
         for box in self.textboxes:

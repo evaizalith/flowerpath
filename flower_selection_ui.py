@@ -232,12 +232,15 @@ class FlowerInformationBox:
 
 class gardenFlower:
     
-    def __init__(self, x, y, w, h, flower):
+    def __init__(self, x, y, flower):
+        minSize = 15
         self.flower = flower
-        self.rect = py.Rect(x, y, w, h)
+        self.maxRect = py.Rect(x, y, 80, 80)
+        self.rect = py.Rect(self.maxRect.x + (self.maxRect.width/2) - (minSize/2), self.maxRect.y + (self.maxRect.height/2) - (minSize/2), minSize, minSize)
         self.isMoving = False
         self.offsetX = 0
         self.offsetY = 0
+        self.collide = False
 
     def handleEvent(self, event):
         if event.type == py.MOUSEBUTTONDOWN:
@@ -257,9 +260,16 @@ class gardenFlower:
                 mouseX, mouseY = event.pos
                 self.rect.x = mouseX + self.offsetX
                 self.rect.y = mouseY + self.offsetY
+                self.maxRect.x = self.rect.x - (self.maxRect.width/2) + (self.rect.width/2)
+                self.maxRect.y = self.rect.y - (self.maxRect.height/2) + (self.rect.height/2)
 
     def draw(self, screen):
+        if self.collide:
+            py.draw.rect(screen, BRIGHT_RED, self.maxRect, 1)
+        else:
+            py.draw.rect(screen, MEDIUM_BLUE, self.maxRect, 1)
         py.draw.rect(screen, MEDIUM_GREEN, self.rect)
+        
 
 
 
