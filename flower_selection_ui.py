@@ -233,16 +233,17 @@ class FlowerInformationBox:
 class gardenFlower:
     
     def __init__(self, x, y, flower):
-        minSize = 15
+        self.minSize = 15
         self.flower = flower
-        self.maxRect = py.Rect(x, y, 80, 80)
-        self.rect = py.Rect(self.maxRect.x + (self.maxRect.width/2) - (minSize/2), self.maxRect.y + (self.maxRect.height/2) - (minSize/2), minSize, minSize)
+        self.maxRect = py.Rect(x, y, 60, 60)
+        self.rect = py.Rect(self.maxRect.x + (self.maxRect.width/2) - (self.minSize/2), self.maxRect.y + (self.maxRect.height/2) - (self.minSize/2), self.minSize, self.minSize)
         self.isMoving = False
         self.offsetX = 0
         self.offsetY = 0
         self.collide = False
         self.image = None
         self.image_path = "placeholders_assets/pinkflower.jpg"
+        print("created flower object")
 
         if self.image_path:
             self.image = py.image.load(self.image_path).convert_alpha()
@@ -278,6 +279,20 @@ class gardenFlower:
 
         if self.image:
             screen.blit(self.image, (self.rect.x, self.rect.y))
+
+    def update(self, days):
+        size = self.flower.getHeight(days)
+        growthPercent = size/self.flower.maxHeight
+        pxSize = (self.flower.maxHeight/12) * 60
+        pxSize = growthPercent * pxSize
+        if pxSize < 15:
+            pxSize = 15
+        self.rect.width = pxSize
+        self.rect.height = pxSize
+        self.rect.x = self.maxRect.x + (self.maxRect.width/2) - (self.rect.width/2)
+        self.rect.y = self.maxRect.y + (self.maxRect.height/2) - (self.rect.height/2)
+        self.image = py.image.load(self.image_path).convert_alpha()
+        self.image = py.transform.scale(self.image, (self.rect.width, self.rect.height))
         
 
 

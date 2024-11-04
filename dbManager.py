@@ -179,11 +179,11 @@ if __name__ == "__main__":
     print(f"db.remove(testPlant;): {value}, Err: {err}")
 
     newPlant = p.Plant("testPlant;///++", 
-                        0, #max height
+                        12, #max height
                         0, #max size
                         0, #germination time
                         0, #mature time
-                        0, #bloom time
+                        75, #bloom time
                         0, #bloom start
                         0, #bloom end
                         1, #full sun

@@ -28,6 +28,9 @@ class MainPage(GameState):
         self.colNum = 5
         rescale(self, self.rowNum, self.colNum, self.cells)
 
+        self.toggle = True
+        self.days = 0
+
     def startup(self, persistent):
         self.persist = persistent
         color = self.persist["screen_color"]
@@ -55,7 +58,11 @@ class MainPage(GameState):
                 print(f"User selected flower on the main page: {user_selected_flower.name}")
                 self.drawViable = True
                 self.user_selected_flower = user_selected_flower
-                self.flowers.append(gardenFlower(self.rectX + (self.rectSizeX/2), self.rectY + (self.rectSizeY/2), user_selected_flower))
+                if self.toggle:
+                    self.flowers.append(gardenFlower(self.rectX + (self.rectSizeX/2), self.rectY + (self.rectSizeY/2), user_selected_flower))
+                    self.toggle = False
+                else:
+                    self.toggle = True
 
             isClosed = self.flower_selection_ui.click_to_close(mouse_position)
             if isClosed:
@@ -71,6 +78,7 @@ class MainPage(GameState):
             cell.handleEvent(event)
         for flower in self.flowers:
             flower.handleEvent(event)
+            flower.update(self.days)
         if event.type == py.KEYDOWN:
             if event.key == py.K_UP:
                 if(self.colNum > 1):
@@ -88,6 +96,18 @@ class MainPage(GameState):
                 if(self.rowNum < 8):
                     self.rowNum += 1
                     rescale(self, self.rowNum, self.colNum, self.cells)
+            if event.key == py.K_u:
+                self.days -= 30
+                if self.days < 0:
+                    self.days = 0
+            if event.key == py.K_i:
+                self.days -= 7
+                if self.days < 0:
+                    self.days = 0
+            if event.key == py.K_o:
+                self.days += 7
+            if event.key == py.K_p:
+                self.days += 30
 
     
     def draw(self, surface):
@@ -95,9 +115,7 @@ class MainPage(GameState):
         for flower1 in self.flowers:
             flower1.collide = False
             for flower2 in self.flowers:
-                # makes sure they aren't the same
-                # just using flower1 == flower2 doesn't work for whatever reason, haha!
-                if not flower1.maxRect == flower2.maxRect:
+                if not flower1 == flower2:
                     if flower1.maxRect.colliderect(flower2.maxRect):
                         flower1.collide = True
         surface.fill(self.screen_color)
