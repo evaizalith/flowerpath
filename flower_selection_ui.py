@@ -53,7 +53,8 @@ class FlowerSelectionUI:
 
             get_selected_flower = button.get_flower(mouse_position, mouse_click)
             if get_selected_flower:
-                print(f"Selected flower: {get_selected_flower.name}")
+                #print(f"Selected flower: {get_selected_flower.name}")
+                self.user_selected_flower = get_selected_flower  
 
         for i, flower in enumerate(self.flowers[first_column:]):
             flower_x_position = self.window_x_size + self.column_separation_margin
