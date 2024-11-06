@@ -136,7 +136,7 @@ class databaseManager():
         value, err = self.add(plant)
         print(f"db.add(Plant): {value}, Err: {err}")
         
-        plant = p.Plant("Benarys Giant Zinna", 45, 12, 5, 90, 45, 6, 8, 1, 0, 0, 1, 1, 0, 0, "images/bgzinna.jpg", 0, 0)
+        plant = p.Plant("Benary`s Giant Zinna", 45, 12, 5, 90, 45, 6, 8, 1, 0, 0, 1, 1, 0, 0, "images/bgzinna.jpg", 0, 0)
         value, err = self.add(plant)
         print(f"db.add(Plant): {value}, Err: {err}")
 
@@ -168,7 +168,7 @@ class databaseManager():
         value, err = self.add(plant)
         print(f"db.add(Plant): {value}, Err: {err}")
 
-        plant = p.Plant("Babys Breath", 20, 8, 10, 47, 30, 6, 8, 1, 0, 0, 1, 0, 0, 0, "images/babysbreath.jpg", 0, 0)
+        plant = p.Plant("Baby`s Breath", 20, 8, 10, 47, 30, 6, 8, 1, 0, 0, 1, 0, 0, 0, "images/babysbreath.jpg", 0, 0)
         value, err = self.add(plant)
         print(f"db.add(Plant): {value}, Err: {err}")
 
