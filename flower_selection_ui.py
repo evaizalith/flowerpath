@@ -53,7 +53,8 @@ class FlowerSelectionUI:
 
             get_selected_flower = button.get_flower(mouse_position, mouse_click)
             if get_selected_flower:
-                print(f"Selected flower: {get_selected_flower.name}")
+                #print(f"Selected flower: {get_selected_flower.name}")
+                self.user_selected_flower = get_selected_flower  
 
         for i, flower in enumerate(self.flowers[first_column:]):
             flower_x_position = self.window_x_size + self.column_separation_margin
@@ -83,10 +84,14 @@ class FlowerSelectionUI:
         return retrieved_flower
 
     def click_to_close(self, mouse_position):
+        isClosed = False
         if (self.flower_information_box != None) and self.flower_information_box.is_visible:
             if self.flower_information_box.check_exit_button_click(mouse_position):
                 self.flower_information_box.is_visible = False
                 self.hovered_flower = None
+                isClosed = True
+        return isClosed
+
 
     
     def load_flowers_from_database(self):
@@ -95,6 +100,13 @@ class FlowerSelectionUI:
             all_flowers, err = self.db_manager.fetch_all()
             if err:
                 print(f"Error fetching flowers from database: {err}")
+            elif len(all_flowers) == 0:
+                print(f"No flowers were retreived from the database")
+                print("Loading Default database...")
+                self.db_manager.loadDefaultDatabase()
+                all_flowers, err = self.db_manager.fetch_all()
+                if err:
+                    print(f"Error fetching flowers from database: {err}")
             else:
                 for flower in all_flowers:
                     name = flower[1]
@@ -112,9 +124,12 @@ class FlowerSelectionUI:
                     overwater_sensitive = flower[13]
                     color = flower[14]
                     perennial = flower[15]
-
-                    plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial)
+                    texture1 = flower[16]
+                    texture2 = flower[17]
+                    texture3 = flower[18]
+                    plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial, texture1, texture2, texture3)
                     flowers.append(plant)
+                    print("Plant" + plant.name + "was appended")
 
         return flowers
     
@@ -218,4 +233,73 @@ class FlowerInformationBox:
         if((self.box_x_position + self.info_box_width - 25 <= x <= self.box_x_position + self.info_box_width) and (self.box_y_position + 5 <= y <= self.box_y_position + 25)):
             return True
         return False
+    
+
+class gardenFlower:
+    
+    def __init__(self, x, y, flower):
+        self.minSize = 15
+        self.flower = flower
+        maxSize = (flower.maxHeight/12) * 60
+        self.maxRect = py.Rect(x, y, maxSize, maxSize)
+        self.rect = py.Rect(self.maxRect.x + (self.maxRect.width/2) - (self.minSize/2), self.maxRect.y + (self.maxRect.height/2) - (self.minSize/2), self.minSize, self.minSize)
+        self.isMoving = False
+        self.offsetX = 0
+        self.offsetY = 0
+        self.collide = False
+        self.image = None
+        self.image_path = "placeholders_assets/pinkflower.jpg"
+        print("created flower object")
+
+        if self.image_path:
+            self.image = py.image.load(self.image_path).convert_alpha()
+            self.image = py.transform.scale(self.image, (self.rect.width, self.rect.height))
+
+    def handleEvent(self, event):
+        if event.type == py.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.rect.collidepoint(event.pos):
+                    self.isMoving = True
+                    mouseX, mouseY = event.pos
+                    self.offsetX = self.rect.x - mouseX
+                    self.offsetY = self.rect.y - mouseY
+
+        elif event.type == py.MOUSEBUTTONUP:
+            if event.button == 1:
+                self.isMoving = False
+        
+        if event.type == py.MOUSEMOTION:
+            if self.isMoving:
+                mouseX, mouseY = event.pos
+                self.rect.x = mouseX + self.offsetX
+                self.rect.y = mouseY + self.offsetY
+                self.maxRect.x = self.rect.x - (self.maxRect.width/2) + (self.rect.width/2)
+                self.maxRect.y = self.rect.y - (self.maxRect.height/2) + (self.rect.height/2)
+
+    def draw(self, screen):
+        if self.collide:
+            py.draw.rect(screen, BRIGHT_RED, self.maxRect, 1)
+        else:
+            py.draw.rect(screen, MEDIUM_BLUE, self.maxRect, 1)
+        py.draw.rect(screen, MEDIUM_GREEN, self.rect)
+
+        if self.image:
+            screen.blit(self.image, (self.rect.x, self.rect.y))
+
+    def update(self, days):
+        size = self.flower.getHeight(days)
+        growthPercent = size/self.flower.maxHeight
+        pxSize = (self.flower.maxHeight/12) * 60
+        pxSize = growthPercent * pxSize
+        if pxSize < 15:
+            pxSize = 15
+        self.rect.width = pxSize
+        self.rect.height = pxSize
+        self.rect.x = self.maxRect.x + (self.maxRect.width/2) - (self.rect.width/2)
+        self.rect.y = self.maxRect.y + (self.maxRect.height/2) - (self.rect.height/2)
+        self.image = py.image.load(self.image_path).convert_alpha()
+        self.image = py.transform.scale(self.image, (self.rect.width, self.rect.height))
+        
+
+
 

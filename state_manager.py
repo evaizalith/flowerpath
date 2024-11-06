@@ -67,7 +67,7 @@ class Game(object):
 
     def update(self, dt):
         self.idle_timer += (dt / 1000)
-        print(f"Idle Timer: {self.idle_timer:.2f} seconds")
+        #print(f"Idle Timer: {self.idle_timer:.2f} seconds")
 
         if self.idle_timer > TIME_TO_IDLE_WARNING:
             self.idle_notification_shown = True
