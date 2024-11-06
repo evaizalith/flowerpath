@@ -2,7 +2,7 @@ import pygame as py
 from abstract_screen import GameState
 from flower_placeholder import Flower
 from flower_selection_ui import FlowerSelectionUI, gardenFlower
-from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum
+from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum, SunlightViabilityButton
 from constants_config import *
 
 class MainPage(GameState):
@@ -31,6 +31,14 @@ class MainPage(GameState):
         self.toggle = True
         self.days = 0
 
+        self.minus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 200, 90, 50, "< -30 Days")
+        self.minus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 275, 90, 50, "< -7 Days")
+        self.plus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 350, 90, 50, "+7 Days >")
+        self.plus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 425, 90, 50, "+30 Days >")
+        self.show_day_button = ShowDayButton(self.days, WINDOW_SIZE_WIDTH - 50 - 90, 125, 90, 50)
+
+        self.sunlight_button = SunlightViabilityButton(WINDOW_SIZE_WIDTH - 50 - 90, 500, 90, 50, "Sunlight")
+
     def startup(self, persistent):
         self.persist = persistent
         color = self.persist["screen_color"]
@@ -38,8 +46,6 @@ class MainPage(GameState):
         text = "" 
         self.text = self.FONT.render(text, True, py.Color("gray10"))
         self.title_rect = self.text.get_rect(center=self.screen_rect.center)
-
-        
 
     def get_event(self, event):
         self.left_mouse_click = False
@@ -50,6 +56,22 @@ class MainPage(GameState):
             mouse_position = py.mouse.get_pos()
             self.left_mouse_click = True
             print("mouse button down detected")
+            if event.type == py.MOUSEBUTTONDOWN and self.minus_thirty_days_button.check_button_click(py.mouse.get_pos()):
+                self.days -= 30
+                if self.days < 0:
+                    self.days = 0
+                self.show_day_button.update_days(self.days)
+            if event.type == py.MOUSEBUTTONDOWN and self.minus_seven_days_button.check_button_click(py.mouse.get_pos()):
+                self.days -= 7
+                if self.days < 0:
+                    self.days = 0
+                self.show_day_button.update_days(self.days)
+            if event.type == py.MOUSEBUTTONDOWN and self.plus_seven_days_button.check_button_click(py.mouse.get_pos()):
+                self.days += 7
+                self.show_day_button.update_days(self.days)
+            if event.type == py.MOUSEBUTTONDOWN and self.plus_thirty_days_button.check_button_click(py.mouse.get_pos()):
+                self.days += 30
+                self.show_day_button.update_days(self.days)
 
         #holds current flower selection - this is the getter
         #Returns plant object 
@@ -133,5 +155,66 @@ class MainPage(GameState):
         mouse_position = py.mouse.get_pos()
         self.flower_selection_ui.render(surface, mouse_position, self.left_mouse_click)
 
+        self.show_day_button.render(surface)
+        self.show_day_button.update_days(self.days)
 
+        self.minus_thirty_days_button.render(surface)
+        self.minus_seven_days_button.render(surface)
+        self.plus_seven_days_button.render(surface)
+        self.plus_thirty_days_button.render(surface)
+        
+        self.sunlight_button.render(surface)
+
+class GenericButton:
+    def __init__(self, box_x_position, box_y_position, button_box_width, button_box_height, button_display_text):
+        self.box_x_position = box_x_position
+        self.box_y_position = box_y_position
+        self.button_box_width = button_box_width
+        self.button_box_height = button_box_height
+        self.button_display_text = button_display_text
+        self.font = py.font.SysFont('georgia', 16)
+
+    def render(self, surface):
+        button_background_rect = py.Rect(self.box_x_position, self.box_y_position, self.button_box_width, self.button_box_height)
+        button_background_color = MEDIUM_GREEN
+        py.draw.rect(surface, button_background_color, button_background_rect, border_radius=20)
+
+        button_rect = py.Rect(self.box_x_position + 5, self.box_y_position + 5, self.button_box_width - 10, self.button_box_height - 10)
+        button_color = PURE_WHITE
+        py.draw.rect(surface, button_color, button_rect, border_radius=20)
+        
+        button_text = self.font.render(self.button_display_text, True, PURE_BLACK)
+        button_text_rect = button_text.get_rect(center=button_rect.center)
+        surface.blit(button_text, button_text_rect)
+
+    def check_button_click(self, mouse_position):
+        x, y = mouse_position
+        if((self.box_x_position <= x <= self.box_x_position + self.button_box_width) and (self.box_y_position <= y <= self.box_y_position + self.button_box_height)):
+            return True
+        return False
+    
+class ShowDayButton:
+    def __init__(self, days, box_x_position, box_y_position, button_box_width, button_box_height):
+        self.days = days
+        self.font = py.font.SysFont('georgia', 16)
+        self.box_x_position = box_x_position
+        self.box_y_position = box_y_position
+        self.button_box_width = button_box_width
+        self.button_box_height = button_box_height
+
+    def update_days(self, days):
+        self.days = days
+ 
+    def render(self, surface):
+        button_background_rect = py.Rect(self.box_x_position, self.box_y_position, self.button_box_width, self.button_box_height)
+        button_background_color = WARM_DARK_BROWN
+        py.draw.rect(surface, button_background_color, button_background_rect, border_radius=20)
+
+        button_rect = py.Rect(self.box_x_position + 5, self.box_y_position + 5, self.button_box_width - 10, self.button_box_height - 10)
+        button_color = PURE_WHITE
+        py.draw.rect(surface, button_color, button_rect, border_radius=20)
+
+        button_text = self.font.render("Days:" + str(self.days), True, PURE_BLACK)
+        button_text_rect = button_text.get_rect(center=button_rect.center)
+        surface.blit(button_text, button_text_rect)
             

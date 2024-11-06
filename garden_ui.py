@@ -149,3 +149,39 @@ def rescaleCellNum(self, rowNum, colNum, cells):
             cellRect = py.Rect(self.rectX + (self.textbox1.direction/rowNum * x), self.rectY + (self.textbox2.direction/colNum * y), self.textbox1.direction/rowNum, self.textbox2.direction/colNum)
             cells[adjust].rect = cellRect
             adjust += 1
+
+class SunlightViabilityButton:
+    def __init__(self, box_x_position, box_y_position, button_box_width, button_box_height, button_display_text):
+        self.box_x_position = box_x_position
+        self.box_y_position = box_y_position
+        self.button_box_width = button_box_width
+        self.button_box_height = button_box_height
+        self.button_display_text = button_display_text
+        self.font = py.font.SysFont('georgia', 16)
+        
+        self.sunlight_levels = ["Full Sun", "Partial Shade", "Full Shade"]
+        self.selected_sunlight_level = 0
+
+    def render(self, surface):
+        sunlight_button_rect = py.Rect(self.box_x_position, self.box_y_position, self.button_box_width, self.button_box_height)
+        sunlight_button_color = PURE_WHITE
+        py.draw.rect(surface, sunlight_button_color, sunlight_button_rect, border_radius=20)
+
+        sunlight_button_text = self.font.render("Sunlight Level", True, PURE_BLACK)
+        sunlight_button_text_rect = sunlight_button_text.get_rect(center=sunlight_button_rect.center)
+        surface.blit(sunlight_button_text, sunlight_button_text_rect)
+
+    def set_sunlight_level(self):
+        self.selected_sunlight_level = (self.selected_sunlight_level + 1) % 3
+
+    def get_sunlight_level(self):
+        return self.sunlight_levels[self.selected_sunlight_level]
+        
+    def check_button_click(self, mouse_position):
+        x, y = mouse_position
+        if((self.box_x_position <= x <= self.box_x_position + self.button_box_width) and (self.box_y_position <= y <= self.box_y_position + self.button_box_height)):
+            return True
+        return False
+    
+
+        
