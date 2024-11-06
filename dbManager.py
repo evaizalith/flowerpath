@@ -9,7 +9,7 @@ class databaseManager():
         self.connection = None
 
         # Used for validating inputs
-        self.validation = re.compile("[\w\s\-]+")
+        self.validation = re.compile("[\w\s\-'+]+")
         self.intVal = re.compile("\d+")
 
     def connect(self):
