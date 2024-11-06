@@ -102,6 +102,11 @@ class FlowerSelectionUI:
                 print(f"Error fetching flowers from database: {err}")
             elif len(all_flowers) == 0:
                 print(f"No flowers were retreived from the database")
+                print("Loading Default database...")
+                self.db_manager.loadDefaultDatabase()
+                all_flowers, err = self.db_manager.fetch_all()
+                if err:
+                    print(f"Error fetching flowers from database: {err}")
             else:
                 for flower in all_flowers:
                     name = flower[1]
@@ -122,7 +127,6 @@ class FlowerSelectionUI:
                     texture1 = flower[16]
                     texture2 = flower[17]
                     texture3 = flower[18]
-
                     plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial, texture1, texture2, texture3)
                     flowers.append(plant)
                     print("Plant" + plant.name + "was appended")
@@ -236,7 +240,8 @@ class gardenFlower:
     def __init__(self, x, y, flower):
         self.minSize = 15
         self.flower = flower
-        self.maxRect = py.Rect(x, y, 60, 60)
+        maxSize = (flower.maxHeight/12) * 60
+        self.maxRect = py.Rect(x, y, maxSize, maxSize)
         self.rect = py.Rect(self.maxRect.x + (self.maxRect.width/2) - (self.minSize/2), self.maxRect.y + (self.maxRect.height/2) - (self.minSize/2), self.minSize, self.minSize)
         self.isMoving = False
         self.offsetX = 0
