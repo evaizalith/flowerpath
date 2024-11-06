@@ -248,7 +248,7 @@ class gardenFlower:
         self.offsetY = 0
         self.collide = False
         self.image = None
-        self.image_path = "placeholders_assets/pinkflower.jpg"
+        self.image_path =  "images/calendula.jpg"
         print("created flower object")
 
         if self.image_path:
