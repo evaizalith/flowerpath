@@ -25,20 +25,20 @@ class Plant():
 
     # Pass age in days 
     def getHeight(self, age : int):
-        # height = maxHeight / 1 + e^(-(age - bloomTime))
-        height = self.maxHeight / (1 + math.exp(-(age - self.bloomTime)))
+        # height = maxHeight / 1 + e^(-(age - matureTime))
+        height = self.maxHeight / (1 + math.exp(-(age - self.matureTime)))
 
         return height
 
     # Retrieves a texture given id
     # Returns a null texture if unable to find it
     # Returns null value if unable to find null texure
-    def getTexture(textureID : int):
+    def getTexture(self, textureID : int):
         texture = None
         path = None
         err = None
         nullTexture = "placeholder_assets/pinkflower.jpg"
-
+        print(self.texture1)
         if textureID == 0:
             path = self.texture1
 
@@ -53,15 +53,15 @@ class Plant():
         
         try:
             texture = py.image.load(path).convert_alpha()
-        except pygame.error as e:
+        except py.error as e:
             print(f"Error loading texture {path}")
-            err = e2
+            err = e
 
         if err != None:
             try: 
                 texture = py.image.load(nullTexture).convert_alpha()
 
-            except pygame.error as e:
+            except py.error as e:
                 print("Error loading null texture")
                 return None
 
