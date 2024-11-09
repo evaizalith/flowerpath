@@ -254,7 +254,7 @@ class gardenFlower:
         self.offsetY = 0
         self.collide = False
         self.image = None
-        self.texture1 = flower.texture1
+        self.texture1 = "images/Generic/seed.jpg"
         print("created flower object")
 
         if self.texture1 in self.image_cache:
@@ -302,14 +302,32 @@ class gardenFlower:
         pxSize = growthPercent * pxSize
         if pxSize < 15:
             pxSize = 15
-        self.rect.width = pxSize
-        self.rect.height = pxSize
+        rectChange = False
+        if not pxSize == self.rect.width:
+            rectChange = True
+            self.rect.width = pxSize
+            self.rect.height = pxSize
+        
         self.rect.x = self.maxRect.x + (self.maxRect.width/2) - (self.rect.width/2)
         self.rect.y = self.maxRect.y + (self.maxRect.height/2) - (self.rect.height/2)
 
+
+        if days <= self.flower.germinationTime:
+            self.texture1 = "images/Generic/seed.jpg"
+            rectChange = True
+        elif days <= self.flower.matureTime:
+            self.texture1 = "images/Generic/sprout.jpg"
+            rectChange = True
+
+        if days > self.flower.matureTime and days <= (self.flower.matureTime + self.flower.bloomTime):
+            self.texture1 = self.flower.texture1
+        if days > (self.flower.matureTime + self.flower.bloomTime):
+            self.texture1 = "images/Generic/sprout.jpg"
+            rectChange = True
+
         if self.texture1 in self.image_cache:
             self.image = self.image_cache[self.texture1]
-        else:
+        if rectChange:
             self.image = py.image.load(self.texture1).convert_alpha()
             self.image = py.transform.scale(self.image, (self.rect.width, self.rect.height))
             self.image_cache[self.texture1] = self.image  

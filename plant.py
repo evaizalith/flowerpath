@@ -25,8 +25,8 @@ class Plant():
 
     # Pass age in days 
     def getHeight(self, age : int):
-        # height = maxHeight / 1 + e^(-(age - bloomTime))
-        height = self.maxHeight / (1 + math.exp(-(age - self.bloomTime)))
+        # height = maxHeight / 1 + e^(-(age - matureTime))
+        height = self.maxHeight / (1 + math.exp(-(age - self.matureTime)))
 
         return height
 
