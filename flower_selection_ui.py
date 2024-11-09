@@ -8,6 +8,7 @@ from constants_config import *
 class FlowerSelectionUI:
     def __init__(self, position=(50,50), dp_path="test"):
         self.db_manager_connection_success = False
+        self.buttons = []
         #[Flower("Calendula"), Flower("Zinna"), Flower("Foxglove"), Flower("Nasturtium"), Flower("Annual Phlox"), Flower("Viola"), Flower("Snapdragon"), Flower("Cosmos"), Flower("Sweet Pea"), Flower("Baby's Breath"), Flower("Marigold"), Flower("Milkweed"), Flower("Larkspur"), Flower("Bleeding Heart"), Flower("Hostas"), Flower("Coral Bells")]
         self.position = position
         self.window_x_size = 20
@@ -15,7 +16,7 @@ class FlowerSelectionUI:
         self.button_vertical_spacing = 60
         self.column_separation_margin = 60
         self.font = py.font.Font(None, 24)
-        self.attached_image = py.image.load("placeholders_assets/pinkflower.jpg").convert_alpha()
+        #self.attached_image = py.image.load("placeholders_assets/pinkflower.jpg").convert_alpha()
         self.hovered_flower = None
         self.flower_information_box = None
         self.user_selected_flower = None
@@ -33,8 +34,7 @@ class FlowerSelectionUI:
             print("Connected to database successfully")
             self.db_manager_connection_success = True
             self.flowers = self.load_flowers_from_database() 
-
-
+        
     #This is the thing you call to get it on the main page
     def render(self, surface, mouse_position, mouse_click):
         font = py.font.Font(None, 24)
@@ -129,12 +129,14 @@ class FlowerSelectionUI:
                     texture3 = flower[18]
                     plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial, texture1, texture2, texture3)
                     flowers.append(plant)
-                    print("Plant" + plant.name + "was appended")
+                    print("Plant " + plant.name + " was appended")
+                    print("Texture 1 is:" + plant.texture1)
 
         return flowers
     
                 
 class CertainFlowerButton: 
+    image_cache = {}
 
     def __init__(self, flower, button_x_position, button_y_position):
         self.flower = flower
@@ -143,16 +145,19 @@ class CertainFlowerButton:
         self.button_width = BUTTON_SIZE
         self.button_height = BUTTON_SIZE
         self.font = py.font.Font(None, 24)
-        self.image = None
-        self.image_path = "placeholders_assets/pinkflower.jpg"
+        self.texture1 = flower.texture1
         self.is_button_clicked = False
+        self.image = None
         self.is_hovered = False
         self.button_width_offset = 5
         self.button_height_offset = 10
 
-        if self.image_path:
-            self.image = py.image.load(self.image_path).convert_alpha()
+        if self.texture1 in self.image_cache:
+            self.image = self.image_cache[self.texture1]
+        else:
+            self.image = py.image.load(self.texture1).convert_alpha()
             self.image = py.transform.scale(self.image, (self.button_width, self.button_height))
+            self.image_cache[self.texture1] = self.image  
 
 
     def render(self, surface):
