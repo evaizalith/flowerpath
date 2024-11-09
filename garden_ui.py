@@ -75,6 +75,7 @@ class TextBox:
         self.rect = py.Rect(x, y, w, h)
         self.color = py.Color((20, 40, 75))
         self.text = text
+        self.cellNum = 0
         self.textSurface = py.font.Font(None, 32).render(text, True, (0, 0, 0))
         self.active = False
         self.direction = direction
@@ -103,6 +104,7 @@ class TextBox:
                         if sizeInt < 180:
                             sizeInt = 180
                             self.text = "3"
+                        self.cellNum = int(self.text)
                         self.direction = sizeInt
                         self.rescaleToggle = True
                     else:
@@ -149,3 +151,13 @@ def rescaleCellNum(self, rowNum, colNum, cells):
             cellRect = py.Rect(self.rectX + (self.textbox1.direction/rowNum * x), self.rectY + (self.textbox2.direction/colNum * y), self.textbox1.direction/rowNum, self.textbox2.direction/colNum)
             cells[adjust].rect = cellRect
             adjust += 1
+
+def drawLines(self, surface, rowNum, colNum):
+    #cell size is always 60 now
+    #Places one line 1/3 of the way through a cell, and then a 2nd line 2/3 of the way. Continues for whole row/column
+    for x in range(rowNum):
+        py.draw.line(surface, DARK_GREY, py.math.Vector2(self.rectX + 20 + (60 * x - 1) , self.rectY), py.math.Vector2(self.rectX + 20 + (60 * x - 1), self.rectY + self.textbox2.direction))
+        py.draw.line(surface, DARK_GREY, py.math.Vector2(self.rectX + 40 + (60 * x - 1) , self.rectY), py.math.Vector2(self.rectX + 40 + (60 * x - 1), self.rectY + self.textbox2.direction))
+    for y in range(colNum):
+        py.draw.line(surface, DARK_GREY, py.math.Vector2(self.rectX, self.rectY + 20 + (60 * y - 1)), py.math.Vector2(self.rectX + self.textbox1.direction, self.rectY + 20 + (60 * y - 1)))
+        py.draw.line(surface, DARK_GREY, py.math.Vector2(self.rectX, self.rectY + 40 + (60 * y - 1)), py.math.Vector2(self.rectX + self.textbox1.direction, self.rectY + 40 + (60 * y - 1)))

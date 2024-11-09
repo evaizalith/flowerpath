@@ -2,7 +2,7 @@ import pygame as py
 from abstract_screen import GameState
 from flower_placeholder import Flower
 from flower_selection_ui import FlowerSelectionUI, gardenFlower
-from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum
+from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum, drawLines
 from constants_config import *
 
 class MainPage(GameState):
@@ -14,8 +14,8 @@ class MainPage(GameState):
         self.left_mouse_click = False
         self.rectX = 200
         self.rectY = 75
-        self.rectSizeX = 510
-        self.rectSizeY = 190
+        self.rectSizeX = 540
+        self.rectSizeY = 240
         self.user_selected_flower = None
         self.drawViable = False
         
@@ -24,8 +24,9 @@ class MainPage(GameState):
         self.textboxes = [self.textbox1, self.textbox2]
         self.cells = []
         self.flowers = []
-        self.rowNum = 5
-        self.colNum = 5
+        self.rowNum = 9
+        self.colNum = 4
+        self.drawLines = True
         rescale(self, self.rowNum, self.colNum, self.cells)
 
         self.toggle = True
@@ -68,12 +69,17 @@ class MainPage(GameState):
             if isClosed:
                 self.drawViable = False
                 self.user_selected_flower = None
-
         for box in self.textboxes:
             box.handleEvent(event)
             if box.rescaleToggle:
-                rescaleCellNum(self, self.rowNum, self.colNum, self.cells)
-                box.rescaleToggle = False
+                if box == self.textbox1:
+                    self.rowNum = box.cellNum
+                    rescale(self, self.rowNum, self.colNum, self.cells)
+                    box.rescaleToggle = False
+                if box == self.textbox2:
+                    self.colNum = box.cellNum
+                    rescale(self, self.rowNum, self.colNum, self.cells)
+                    box.rescaleToggle = False
         for cell in self.cells:
             cell.handleEvent(event)
         for flower in self.flowers:
@@ -108,6 +114,8 @@ class MainPage(GameState):
                 self.days += 7
             if event.key == py.K_p:
                 self.days += 30
+            if event.key == py.K_t:
+                self.drawLines = not self.drawLines
 
     
     def draw(self, surface):
@@ -123,6 +131,8 @@ class MainPage(GameState):
         for box in self.textboxes:
             box.draw(surface)
         py.draw.rect(surface, (0, 0, 0), [self.rectX, self.rectY, self.textbox1.direction, self.textbox2.direction], 2)
+        if self.drawLines:
+            drawLines(self, surface, self.rowNum, self.colNum)
         for cell in self.cells:
             if self.drawViable:
                 cell.viabilityDraw(surface, self.user_selected_flower)
