@@ -8,15 +8,13 @@ class ClickBox:
         self.rect = py.Rect(x, y, w, h)
         self.color = (0, 0, 0)
         self.fill = False
+        self.count = 0
         self.fullSun = fullSun
         self.partialShade = partialShade
         self.fullShade = fullShade
         self.droughtRes = droughtRes
 
     def handleEvent(self, event, selection_mode, sunlight_level):
-        print("Handle event has been called")
-        print("Sunlight_level has been recieved as: " + str(sunlight_level))
-        print("selection mode has been retrieved as: " + str(selection_mode))
         if event.type == py.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 if selection_mode:
@@ -44,8 +42,13 @@ class ClickBox:
                         print("Set to Full Shade")
 
     def draw(self, screen):
+        # give some feedback while viability draw is down
         if self.fill:
-            py.draw.rect(screen, (0, 0, 0), self.rect)
+            self.count += 1
+            py.draw.rect(screen, MEDIUM_GREY, self.rect)
+            if self.count >= 10:
+                self.fill = False
+                self.count = 0
         else:
             py.draw.rect(screen, (0, 0, 0), self.rect, 1)
     """ 
