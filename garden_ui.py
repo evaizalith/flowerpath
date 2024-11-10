@@ -40,7 +40,7 @@ class ClickBox:
                         self.partialShade = False 
                         self.fullShade = True
                         #print("Set to Full Shade")
-                elif water_selection_mode:
+                if water_selection_mode:
                     if water_level == 0:
                         self.color = NORMAL_SOIL_MOISTURE_COLOR
                         self.fill = True

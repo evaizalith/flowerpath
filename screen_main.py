@@ -95,19 +95,13 @@ class MainPage(GameState):
                 self.soil_moisture_selection_mode = False
                 #print("Sunlight selection mode is active")
 
-            if self.sunlight_selection_mode == True:
-                #print("Selection mode is iterating over cells")
-                for cell in self.cells:
-                    cell.handleEvent(event, self.sunlight_selection_mode, self.sunlight_button.selected_sunlight_level, self.soil_moisture_selection_mode, self.soil_moisture_button.selected_water_level)
-
             if self.soil_moisture_button.check_button_click(py.mouse.get_pos()):
                 self.soil_moisture_button.set_water_level()
                 self.sunlight_selection_mode = False
                 self.soil_moisture_selection_mode = True
-                
-            if self.soil_moisture_selection_mode:
-                for cell in self.cells:
-                    cell.handleEvent(event, self.sunlight_selection_mode, self.sunlight_button.selected_sunlight_level, self.soil_moisture_selection_mode, self.soil_moisture_button.selected_water_level)
+
+            for cell in self.cells:
+                cell.handleEvent(event, self.sunlight_selection_mode, self.soil_moisture_selection_mode, self.sunlight_button.selected_sunlight_level, self.soil_moisture_button.selected_water_level)
                      
 
         #holds current flower selection - this is the getter
