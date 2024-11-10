@@ -14,10 +14,10 @@ class ClickBox:
         self.fullShade = fullShade
         self.droughtRes = droughtRes
 
-    def handleEvent(self, event, selection_mode, sunlight_level):
+    def handleEvent(self, event, sunlight_selection_mode, water_selection_mode, sunlight_level, water_level):
         if event.type == py.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
-                if selection_mode:
+                if sunlight_selection_mode:
                     print(f"Cell {self.rect.topleft} clicked in selection mode")
                     if sunlight_level == 0:
                         self.color = FULL_SUN_COLOR
@@ -40,6 +40,17 @@ class ClickBox:
                         self.partialShade = False 
                         self.fullShade = True
                         print("Set to Full Shade")
+                elif water_selection_mode:
+                    if water_level == 0:
+                        self.color = NORMAL_SOIL_MOISTURE_COLOR
+                        self.fill = True
+                        self.droughtRes = False
+                        print("Set to normal soil moisture")
+                    elif water_level == 1:
+                        self.color = DRY_SOIL_MOISTURE_COLOR
+                        self.fill = True
+                        self.droughtRes = True
+                        print("Set to dry soil moisture")
 
     def draw(self, screen):
         # give some feedback while viability draw is down
@@ -268,7 +279,7 @@ class SoilMoistureButton:
     def set_water_level(self):
         self.selected_water_level = (self.selected_water_level + 1) % 2
 
-    def get_sunlight_level(self):
+    def get_water_level(self):
         return self.water_levels[self.selected_water_level]
         
     def check_button_click(self, mouse_position):

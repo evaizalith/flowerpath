@@ -34,14 +34,17 @@ class MainPage(GameState):
         self.toggle = True
         self.days = 0
 
-        self.minus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 240, 90, 50, "< -30 Days")
-        self.minus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 315, 90, 50, "< -7 Days")
-        self.plus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 390, 90, 50, "+7 Days >")
-        self.plus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 465, 90, 50, "+30 Days >")
-        self.show_day_button = ShowDayButton(self.days, WINDOW_SIZE_WIDTH - 50 - 90, 165, 90, 50)
+        button_start_position_y = 255
+        button_spacing = 65
+
+        self.minus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y, 90, 50, "< -30 Days")
+        self.minus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y + button_spacing, 90, 50, "< -7 Days")
+        self.plus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y + 2 * button_spacing, 90, 50, "+7 Days >")
+        self.plus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y + 3 * button_spacing, 90, 50, "+30 Days >")
+        self.show_day_button = ShowDayButton(self.days, WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y - button_spacing, 90, 50)
         
-        self.sunlight_button = SunlightViabilityButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 10, 120, 50, "Sunlight")
-        self.soil_moisture_button = SoilMoistureButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 90, 120, 50, "Soil Drainage")
+        self.sunlight_button = SunlightViabilityButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 30, 120, 50, "Sunlight")
+        self.soil_moisture_button = SoilMoistureButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 110, 120, 50, "Soil Drainage")
 
 
     def startup(self, persistent):
@@ -89,7 +92,7 @@ class MainPage(GameState):
             if self.sunlight_selection_mode == True:
                 print("Selection mode is iterating over cells")
                 for cell in self.cells:
-                    cell.handleEvent(event, self.sunlight_selection_mode, self.sunlight_button.selected_sunlight_level)
+                    cell.handleEvent(event, self.sunlight_selection_mode, self.sunlight_button.selected_sunlight_level, self.soil_moisture_selection_mode, self.soil_moisture_button.selected_water_level)
 
             if self.soil_moisture_button.check_button_click(py.mouse.get_pos()):
                 self.soil_moisture_button.set_water_level()
@@ -98,7 +101,7 @@ class MainPage(GameState):
                 
             if self.soil_moisture_selection_mode:
                 for cell in self.cells:
-                    cell.handleEvent(event, self.soil_moisture_selection_mode, self.soil_moisture_button.selected_water_level)
+                    cell.handleEvent(event, self.sunlight_selection_mode, self.sunlight_button.selected_sunlight_level, self.soil_moisture_selection_mode, self.soil_moisture_button.selected_water_level)
                      
 
         #holds current flower selection - this is the getter
@@ -195,6 +198,7 @@ class GenericButton:
         self.button_box_height = button_box_height
         self.button_display_text = button_display_text
         self.font = py.font.SysFont('georgia', 16)
+
     def render(self, surface):
         button_background_rect = py.Rect(self.box_x_position, self.box_y_position, self.button_box_width, self.button_box_height)
         button_background_color = MEDIUM_GREEN
@@ -206,6 +210,7 @@ class GenericButton:
         button_text = self.font.render(self.button_display_text, True, PURE_BLACK)
         button_text_rect = button_text.get_rect(center=button_rect.center)
         surface.blit(button_text, button_text_rect)
+
     def check_button_click(self, mouse_position):
         x, y = mouse_position
         if((self.box_x_position <= x <= self.box_x_position + self.button_box_width) and (self.box_y_position <= y <= self.box_y_position + self.button_box_height)):
