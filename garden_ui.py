@@ -234,3 +234,47 @@ class SunlightViabilityButton:
             return True
         return False
 
+class SoilMoistureButton:
+    def __init__(self, box_x_position, box_y_position, button_box_width, button_box_height, button_display_text):
+        self.box_x_position = box_x_position
+        self.box_y_position = box_y_position
+        self.button_box_width = button_box_width
+        self.button_box_height = button_box_height
+        self.button_display_text = button_display_text
+        self.font = py.font.SysFont('georgia', 16)
+        
+        self.water_levels = ["Normal Drainage", "Dry Soil"]
+        self.selected_water_level = 0
+        
+    def render(self, surface):
+        water_level_rect = py.Rect(self.box_x_position, self.box_y_position, self.button_box_width, self.button_box_height)
+        
+        if self.selected_water_level == 0:
+            water_button_color = NORMAL_SOIL_MOISTURE_COLOR
+        else:
+            self.selected_water_level == 1
+            water_button_color = PARTIAL_SHADE_COLOR
+
+        py.draw.rect(surface, water_button_color, water_level_rect, border_radius=20)
+        water_button_text = self.font.render("Soil Moisture", True, PURE_BLACK)
+        water_button_text_rect = water_button_text.get_rect(center=water_level_rect.center)
+        surface.blit(water_button_text, water_button_text_rect)
+
+        selected_text = self.water_levels[self.selected_water_level]
+        water_level_text = self.font.render(selected_text, True, PURE_BLACK)
+        water_level_text_rect = water_level_text.get_rect(center=(self.box_x_position + self.button_box_width // 2, self.box_y_position + self.button_box_height + 10))
+        surface.blit(water_level_text, water_level_text_rect)
+
+    def set_water_level(self):
+        self.selected_water_level = (self.selected_water_level + 1) % 2
+
+    def get_sunlight_level(self):
+        return self.water_levels[self.selected_water_level]
+        
+    def check_button_click(self, mouse_position):
+        x, y = mouse_position
+        if((self.box_x_position <= x <= self.box_x_position + self.button_box_width) and (self.box_y_position <= y <= self.box_y_position + self.button_box_height)):
+            return True
+        return False
+
+

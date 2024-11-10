@@ -2,7 +2,7 @@ import pygame as py
 from abstract_screen import GameState
 from flower_placeholder import Flower
 from flower_selection_ui import FlowerSelectionUI, gardenFlower
-from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum, drawLines, SunlightViabilityButton
+from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum, drawLines, SunlightViabilityButton, SoilMoistureButton
 from constants_config import *
 
 class MainPage(GameState):
@@ -18,7 +18,8 @@ class MainPage(GameState):
         self.rectSizeY = 240
         self.user_selected_flower = None
         self.drawViable = False
-        self.selection_mode = False
+        self.sunlight_selection_mode = False
+        self.soil_moisture_selection_mode = False
         
         self.textbox1 = TextBox(200, 15, 140, 32, self.rectSizeX, "9")
         self.textbox2 = TextBox(390, 15, 140, 32, self.rectSizeY, "4")
@@ -33,13 +34,14 @@ class MainPage(GameState):
         self.toggle = True
         self.days = 0
 
-        self.minus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 200, 90, 50, "< -30 Days")
-        self.minus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 275, 90, 50, "< -7 Days")
-        self.plus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 350, 90, 50, "+7 Days >")
-        self.plus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 425, 90, 50, "+30 Days >")
-        self.show_day_button = ShowDayButton(self.days, WINDOW_SIZE_WIDTH - 50 - 90, 125, 90, 50)
+        self.minus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 240, 90, 50, "< -30 Days")
+        self.minus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 315, 90, 50, "< -7 Days")
+        self.plus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 390, 90, 50, "+7 Days >")
+        self.plus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 465, 90, 50, "+30 Days >")
+        self.show_day_button = ShowDayButton(self.days, WINDOW_SIZE_WIDTH - 50 - 90, 165, 90, 50)
         
-        self.sunlight_button = SunlightViabilityButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 30, 120, 50, "Sunlight")
+        self.sunlight_button = SunlightViabilityButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 10, 120, 50, "Sunlight")
+        self.soil_moisture_button = SoilMoistureButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 90, 120, 50, "Soil Drainage")
 
 
     def startup(self, persistent):
@@ -80,13 +82,23 @@ class MainPage(GameState):
 
             if self.sunlight_button.check_button_click(py.mouse.get_pos()):
                 self.sunlight_button.set_sunlight_level()
-                self.selection_mode = True
-                print("Selection mode is active")
+                self.sunlight_selection_mode = True
+                self.soil_moisture_selection_mode = False
+                print("Sunlight selection mode is active")
 
-            if self.selection_mode == True:
+            if self.sunlight_selection_mode == True:
                 print("Selection mode is iterating over cells")
                 for cell in self.cells:
-                    cell.handleEvent(event, self.selection_mode, self.sunlight_button.selected_sunlight_level)
+                    cell.handleEvent(event, self.sunlight_selection_mode, self.sunlight_button.selected_sunlight_level)
+
+            if self.soil_moisture_button.check_button_click(py.mouse.get_pos()):
+                self.soil_moisture_button.set_water_level()
+                self.sunlight_selection_mode = False
+                self.soil_moisture_selection_mode = True
+                
+            if self.soil_moisture_selection_mode:
+                for cell in self.cells:
+                    cell.handleEvent(event, self.soil_moisture_selection_mode, self.soil_moisture_button.selected_water_level)
                      
 
         #holds current flower selection - this is the getter
@@ -140,10 +152,6 @@ class MainPage(GameState):
             if event.key == py.K_t:
                 self.drawLines = not self.drawLines
 
-
-
-
-    
     def draw(self, surface):
         #collision in the draw loop! Sorgy...
         for flower1 in self.flowers:
@@ -177,6 +185,7 @@ class MainPage(GameState):
         self.plus_thirty_days_button.render(surface)
         
         self.sunlight_button.render(surface)
+        self.soil_moisture_button.render(surface)
 
 class GenericButton:
     def __init__(self, box_x_position, box_y_position, button_box_width, button_box_height, button_display_text):
