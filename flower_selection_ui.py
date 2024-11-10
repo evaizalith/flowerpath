@@ -92,8 +92,6 @@ class FlowerSelectionUI:
                 isClosed = True
         return isClosed
 
-
-    
     def load_flowers_from_database(self):
         flowers = []
         if self.db_manager_connection_success:
@@ -129,8 +127,8 @@ class FlowerSelectionUI:
                     texture3 = flower[18]
                     plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial, texture1, texture2, texture3)
                     flowers.append(plant)
-                    print("Plant " + plant.name + " was appended")
-                    print("Texture 1 is:" + plant.texture1)
+                    #print("Plant " + plant.name + " was appended")
+                    #print("Texture 1 is:" + plant.texture1)
 
         return flowers
     

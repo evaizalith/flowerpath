@@ -6,6 +6,9 @@ import pygame as py
 
 if __name__ == "__main__":
     py.init()
+    py.display.set_caption("Flowerpath Companion Planter")
+    icon = py.image.load("images/flowertitle.png")
+    py.display.set_icon(icon)
     screen = py.display.set_mode((WINDOW_SIZE_WIDTH, WINDOW_SIZE_HEIGHT))
     states = {"TITLE": TitleScreen(),
               "MAINPAGE": MainPage()}
