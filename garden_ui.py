@@ -18,39 +18,39 @@ class ClickBox:
         if event.type == py.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 if sunlight_selection_mode:
-                    print(f"Cell {self.rect.topleft} clicked in selection mode")
+                    #print(f"Cell {self.rect.topleft} clicked in selection mode")
                     if sunlight_level == 0:
                         self.color = FULL_SUN_COLOR
                         self.fill = True
                         self.fullSun = True
                         self.partialShade = False 
                         self.fullShade = False
-                        print("Set to Full Sun")
+                        #print("Set to Full Sun")
                     elif sunlight_level == 1:
                         self.color = PARTIAL_SHADE_COLOR
                         self.fill = True
                         self.fullSun = False
                         self.partialShade = True
                         self.fullShade = False
-                        print("Set to Partial Shade")
+                        #print("Set to Partial Shade")
                     elif sunlight_level == 2:
                         self.color = FULL_SHADE_COLOR
                         self.fill = True 
                         self.fullSun = False
                         self.partialShade = False 
                         self.fullShade = True
-                        print("Set to Full Shade")
+                        #print("Set to Full Shade")
                 elif water_selection_mode:
                     if water_level == 0:
                         self.color = NORMAL_SOIL_MOISTURE_COLOR
                         self.fill = True
                         self.droughtRes = False
-                        print("Set to normal soil moisture")
+                        #print("Set to normal soil moisture")
                     elif water_level == 1:
                         self.color = DRY_SOIL_MOISTURE_COLOR
                         self.fill = True
                         self.droughtRes = True
-                        print("Set to dry soil moisture")
+                        #print("Set to dry soil moisture")
 
     def draw(self, screen):
         # give some feedback while viability draw is down

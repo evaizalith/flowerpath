@@ -34,17 +34,25 @@ class MainPage(GameState):
         self.toggle = True
         self.days = 0
 
-        button_start_position_y = 255
-        button_spacing = 65
+        timeline_button_position_y = 255
+        timeline_button_x_spacing = 140
+        timeline_button_y_spacing = 65
+        timeline_button_position_x = WINDOW_SIZE_WIDTH - timeline_button_x_spacing
+        timeline_button_width = 90
+        timeline_button_height = 50
 
-        self.minus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y, 90, 50, "< -30 Days")
-        self.minus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y + button_spacing, 90, 50, "< -7 Days")
-        self.plus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y + 2 * button_spacing, 90, 50, "+7 Days >")
-        self.plus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y + 3 * button_spacing, 90, 50, "+30 Days >")
-        self.show_day_button = ShowDayButton(self.days, WINDOW_SIZE_WIDTH - 50 - 90, button_start_position_y - button_spacing, 90, 50)
+        self.minus_thirty_days_button = GenericButton(timeline_button_position_x, timeline_button_position_y, timeline_button_width, timeline_button_height, "< -30 Days")
+        self.minus_seven_days_button = GenericButton(timeline_button_position_x, timeline_button_position_y + timeline_button_y_spacing, timeline_button_width, timeline_button_height, "< -7 Days")
+        self.plus_seven_days_button = GenericButton(timeline_button_position_x, timeline_button_position_y + 2 * timeline_button_y_spacing, timeline_button_width, timeline_button_height, "+7 Days >")
+        self.plus_thirty_days_button = GenericButton(timeline_button_position_x, timeline_button_position_y + 3 * timeline_button_y_spacing, timeline_button_width, timeline_button_height, "+30 Days >")
+        self.show_day_button = ShowDayButton(self.days, timeline_button_position_x, timeline_button_position_y - timeline_button_y_spacing, timeline_button_width, timeline_button_height)
+
+        garden_options_x_spacing = timeline_button_position_x - 15
+        garden_options_width = 120
+        garden_options_height = 50
         
-        self.sunlight_button = SunlightViabilityButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 30, 120, 50, "Sunlight")
-        self.soil_moisture_button = SoilMoistureButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 110, 120, 50, "Soil Drainage")
+        self.sunlight_button = SunlightViabilityButton(garden_options_x_spacing, 30, garden_options_width, garden_options_height, "Sunlight")
+        self.soil_moisture_button = SoilMoistureButton(garden_options_x_spacing, 110, garden_options_width, garden_options_height, "Soil Drainage")
 
 
     def startup(self, persistent):
@@ -55,8 +63,6 @@ class MainPage(GameState):
         self.text = self.FONT.render(text, True, py.Color("gray10"))
         self.title_rect = self.text.get_rect(center=self.screen_rect.center)
 
-        
-
     def get_event(self, event):
         self.left_mouse_click = False
         if event.type == py.QUIT:
@@ -65,7 +71,7 @@ class MainPage(GameState):
             self.title_rect.center = event.pos
             mouse_position = py.mouse.get_pos()
             self.left_mouse_click = True
-            print("mouse button down detected")
+            #print("mouse button down detected")
             if self.minus_thirty_days_button.check_button_click(py.mouse.get_pos()):
                 self.days -= 30
                 if self.days < 0:
@@ -87,10 +93,10 @@ class MainPage(GameState):
                 self.sunlight_button.set_sunlight_level()
                 self.sunlight_selection_mode = True
                 self.soil_moisture_selection_mode = False
-                print("Sunlight selection mode is active")
+                #print("Sunlight selection mode is active")
 
             if self.sunlight_selection_mode == True:
-                print("Selection mode is iterating over cells")
+                #print("Selection mode is iterating over cells")
                 for cell in self.cells:
                     cell.handleEvent(event, self.sunlight_selection_mode, self.sunlight_button.selected_sunlight_level, self.soil_moisture_selection_mode, self.soil_moisture_button.selected_water_level)
 
@@ -108,7 +114,7 @@ class MainPage(GameState):
         #Returns plant object 
             user_selected_flower = self.flower_selection_ui.get_current_flower()
             if user_selected_flower:
-                print(f"User selected flower on the main page: {user_selected_flower.name}")
+                #print(f"User selected flower on the main page: {user_selected_flower.name}")
                 self.drawViable = True
                 self.user_selected_flower = user_selected_flower
                 if self.toggle:
