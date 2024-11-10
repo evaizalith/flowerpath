@@ -13,17 +13,41 @@ class ClickBox:
         self.fullShade = fullShade
         self.droughtRes = droughtRes
 
-    def handleEvent(self, event):
+    def handleEvent(self, event, selection_mode, sunlight_level):
+        print("Handle event has been called")
+        print("Sunlight_level has been recieved as: " + str(sunlight_level))
+        print("selection mode has been retrieved as: " + str(selection_mode))
         if event.type == py.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
-                self.fill = not self.fill
+                if selection_mode:
+                    print(f"Cell {self.rect.topleft} clicked in selection mode")
+                    if sunlight_level == 0:
+                        self.color = FULL_SUN_COLOR
+                        self.fill = True
+                        self.fullSun = True
+                        self.partialShade = False 
+                        self.fullShade = False
+                        print("Set to Full Sun")
+                    elif sunlight_level == 1:
+                        self.color = PARTIAL_SHADE_COLOR
+                        self.fill = True
+                        self.fullSun = False
+                        self.partialShade = True
+                        self.fullShade = False
+                        print("Set to Partial Shade")
+                    elif sunlight_level == 2:
+                        self.color = FULL_SHADE_COLOR
+                        self.fill = True 
+                        self.fullSun = False
+                        self.partialShade = False 
+                        self.fullShade = True
+                        print("Set to Full Shade")
 
     def draw(self, screen):
         if self.fill:
             py.draw.rect(screen, (0, 0, 0), self.rect)
         else:
             py.draw.rect(screen, (0, 0, 0), self.rect, 1)
-
     """ 
     Logic for via draw:
     viability starts at 0 (neutral), and can become 1 (good) or -1 (bad)

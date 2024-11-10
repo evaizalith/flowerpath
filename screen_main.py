@@ -18,6 +18,7 @@ class MainPage(GameState):
         self.rectSizeY = 240
         self.user_selected_flower = None
         self.drawViable = False
+        self.selection_mode = False
         
         self.textbox1 = TextBox(200, 15, 140, 32, self.rectSizeX, "9")
         self.textbox2 = TextBox(390, 15, 140, 32, self.rectSizeY, "4")
@@ -37,6 +38,7 @@ class MainPage(GameState):
         self.plus_seven_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 350, 90, 50, "+7 Days >")
         self.plus_thirty_days_button = GenericButton(WINDOW_SIZE_WIDTH - 50 - 90, 425, 90, 50, "+30 Days >")
         self.show_day_button = ShowDayButton(self.days, WINDOW_SIZE_WIDTH - 50 - 90, 125, 90, 50)
+        
         self.sunlight_button = SunlightViabilityButton(WINDOW_SIZE_WIDTH - 50 - 90 - (120 - 90) // 2, 30, 120, 50, "Sunlight")
 
 
@@ -78,7 +80,20 @@ class MainPage(GameState):
 
             if self.sunlight_button.check_button_click(py.mouse.get_pos()):
                 self.sunlight_button.set_sunlight_level()
+                self.selection_mode = True
+                print("Selection mode is active")
 
+            if self.selection_mode == True:
+                print("Selection mode is iterating over cells")
+                for cell in self.cells:
+                    if cell.rect.collidepoint(mouse_position):
+                        print("A certain cell has been selected via collison")
+                        print("Selection mode is currently " + str(self.selection_mode))
+                        print("The sunlight level of the button is " + str(self.sunlight_button.get_sunlight_level()))
+                        cell.handleEvent(event, self.selection_mode, self.sunlight_button.get_sunlight_level())
+                        print("Post cell handle event line in main page")
+                        print("Selection mode has been sent to false")
+                     
 
         #holds current flower selection - this is the getter
         #Returns plant object 
@@ -109,7 +124,7 @@ class MainPage(GameState):
                     rescale(self, self.rowNum, self.colNum, self.cells)
                     box.rescaleToggle = False
         for cell in self.cells:
-            cell.handleEvent(event)
+            cell.handleEvent(event, self.selection_mode, self.sunlight_button.get_sunlight_level())
         for flower in self.flowers:
             flower.handleEvent(event)
             flower.update(self.days)
