@@ -335,5 +335,52 @@ class gardenFlower:
             self.image_cache[self.texture1] = self.image  
 
 
+class timelineSlider:
+    def __init__(self, x, y, size):
+        self.rect = py.Rect(x - (size/2), y + (size/2), size, size)
+        self.isMoving = False
+        self.offsetX = 0
+        self.offsetY = 0
+
+    def handleEvent(self, event):
+        if event.type == py.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.rect.collidepoint(event.pos):
+                    self.isMoving = True
+                    mouseX, mouseY = event.pos
+                    self.offsetX = self.rect.x - mouseX
+
+        elif event.type == py.MOUSEBUTTONUP:
+            if event.button == 1:
+                self.isMoving = False
+
+        if event.type == py.MOUSEMOTION:
+            if self.isMoving:
+                mouseX, mouseY = event.pos
+                self.rect.x = mouseX + self.offsetX
+                if self.rect.x < 170:
+                    self.rect.x = 170
+                if self.rect.x > 770:
+                    self.rect.x = 770
+
+    def draw(self, screen):
+        if self.isMoving:
+            py.draw.rect(screen, LIGHT_BLUE, self.rect)
+        else:
+            py.draw.rect(screen, MEDIUM_BLUE, self.rect)
+
+    # for calculating the day from the slider's position
+    def calculateDay(self):
+        growPercent = ((self.rect.x - 170) / 600)
+        days = round(growPercent * 365)
+        return days
+    
+    # for calculating the slider's position from the days
+    # called when buttons are clicked
+    def calculatePosition(self, days):
+        sliderPercent = days/365
+        self.rect.x = 170 + round(sliderPercent * 600)
+
+    
 
 

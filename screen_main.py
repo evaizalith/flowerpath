@@ -1,7 +1,7 @@
 import pygame as py 
 from abstract_screen import GameState
 from flower_placeholder import Flower
-from flower_selection_ui import FlowerSelectionUI, gardenFlower
+from flower_selection_ui import FlowerSelectionUI, gardenFlower, timelineSlider
 from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum, drawLines, SunlightViabilityButton, SoilMoistureButton
 from constants_config import *
 
@@ -30,6 +30,8 @@ class MainPage(GameState):
         self.colNum = 4
         self.drawLines = True
         rescale(self, self.rowNum, self.colNum, self.cells)
+
+        self.slider = timelineSlider(200, 665, 60)
 
         self.toggle = True
         self.days = 0
@@ -77,17 +79,27 @@ class MainPage(GameState):
                 if self.days < 0:
                     self.days = 0
                 self.show_day_button.update_days(self.days)
+                self.slider.calculatePosition(self.days)
             if self.minus_seven_days_button.check_button_click(py.mouse.get_pos()):
                 self.days -= 7
                 if self.days < 0:
                     self.days = 0
                 self.show_day_button.update_days(self.days)
+                self.slider.calculatePosition(self.days)
             if self.plus_seven_days_button.check_button_click(py.mouse.get_pos()):
                 self.days += 7
+                if self.days > 365:
+                    self.days = 365
                 self.show_day_button.update_days(self.days)
+                self.slider.calculatePosition(self.days)
+
             if self.plus_thirty_days_button.check_button_click(py.mouse.get_pos()):
                 self.days += 30
+                if self.days > 365:
+                    self.days = 365
                 self.show_day_button.update_days(self.days)
+                self.slider.calculatePosition(self.days)
+
 
             if self.sunlight_button.check_button_click(py.mouse.get_pos()):
                 self.sunlight_button.set_sunlight_level()
@@ -121,6 +133,12 @@ class MainPage(GameState):
             if isClosed:
                 self.drawViable = False
                 self.user_selected_flower = None
+    
+        #updates slider position and has it update self.days and button
+        self.slider.handleEvent(event)
+        self.days = self.slider.calculateDay()
+        self.show_day_button.update_days(self.days)
+
         for box in self.textboxes:
             box.handleEvent(event)
             if box.rescaleToggle:
@@ -163,6 +181,10 @@ class MainPage(GameState):
                 cell.draw(surface)
         for flower in self.flowers:
             flower.draw(surface)
+
+        py.draw.line(surface, DARK_GREY, py.math.Vector2(200 , 725), py.math.Vector2(800, 725), 5)
+        self.slider.draw(surface)
+
         mouse_position = py.mouse.get_pos()
         self.flower_selection_ui.render(surface, mouse_position, self.left_mouse_click)
 
