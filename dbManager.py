@@ -1,6 +1,6 @@
 import sqlite3
 import plant as p 
-import re
+import input_validation
 
 class databaseManager():
     def __init__(self, database):
@@ -9,8 +9,7 @@ class databaseManager():
         self.connection = None
 
         # Used for validating inputs
-        self.validation = re.compile(r"[\w\s\-'+]+")
-        self.intVal = re.compile(r"\d+")
+        self.validate = input_validation.inputManager()
 
     def connect(self):
         success = True
@@ -33,7 +32,7 @@ class databaseManager():
         result = []
         err = None
 
-        plantName = self.validation.match(plantName).group(0)
+        plantName = self.validate.text(plantName)
 
         try:
             fetch = self.cursor.execute(f"SELECT * FROM Plants WHERE Name=\"{plantName}\"")
@@ -80,7 +79,7 @@ class databaseManager():
         success = True
         err = None
 
-        plantName = self.validation.match(plantName).group(0)
+        plantName = self.validate.text(plantName)
 
         try:
             self.cursor.execute(f"DELETE FROM Plants WHERE name = '{plantName}'")
@@ -207,79 +206,79 @@ class databaseManager():
 # Used for testing the database manager
 if __name__ == "__main__":
     print("Testing databaseManager...")
-    db = databaseManager("test")
+    db = databaseManager("testDb")
     success, error = db.connect()
     print(f"db.connect() return: {success},{error}")
 
-    # plant = p.Plant("testPlant", 
-    #                     0, #max height
-    #                     0, #max size
-    #                     0, #germination time
-    #                     0, #mature time
-    #                     0, #bloom time
-    #                     0, #bloom start
-    #                     0, #bloom end
-    #                     1, #full sun
-    #                     0, #Partial shade
-    #                     0, #full shade
-    #                     0, #drought tolerant
-    #                     0, #overwater sensitive
-    #                     0, #color
-    #                     0, #perennial
-    #                     0, #texture1
-    #                     0, #texture2
-    #                     0) #texture3
+    plant = p.Plant("testPlant", 
+                         0, #max height
+                         0, #max size
+                         0, #germination time
+                         0, #mature time
+                         0, #bloom time
+                         0, #bloom start
+                         0, #bloom end
+                         1, #full sun
+                         0, #Partial shade
+                         0, #full shade
+                         0, #drought tolerant
+                         0, #overwater sensitive
+                         0, #color
+                         0, #perennial
+                         0, #texture1
+                         0, #texture2
+                         0) #texture3
 
-    # value, err = db.fetch("testPlant")
-    # print(f"db has: {value}, Err: {err}")
+    value, err = db.fetch("testPlant")
+    print(f"db has: {value}, Err: {err}")
 
-    # print("The contents of the database are: ")
-    # db.printAll()
+    print("The contents of the database are: ")
+    db.printAll()
 
-    # value, err = db.add(plant)
-    # print(f"db.add(testPlant): {value}, Err: {err}")
-    # value, err = db.fetch("testPlant")
-    # print(f"db has: {value}, Err: {err}")
+    value, err = db.add(plant)
+    print(f"db.add(testPlant): {value}, Err: {err}")
+    value, err = db.fetch("testPlant")
+    print(f"db has: {value}, Err: {err}")
 
-    # value, err = db.remove("testPlant")
-    # print(f"db.remove(testPlant): {value}, Err: {err}")
-    # value, err = db.fetch("testPlant")
-    # print(f"db.fetch(testPlant): {value}, Err: {err}")
+    value, err = db.remove("testPlant")
+    print(f"db.remove(testPlant): {value}, Err: {err}")
+    value, err = db.fetch("testPlant")
+    print(f"db.fetch(testPlant): {value}, Err: {err}")
 
-    # # test input validation
-    # value, err = db.add(plant)
-    # print(f"db.add(testPlant): {value}, Err: {err}")
-    # value, err = db.remove("testPlant;")
-    # print(f"db.remove(testPlant;): {value}, Err: {err}")
+    # test input validation
+    value, err = db.add(plant)
+    print(f"db.add(testPlant): {value}, Err: {err}")
+    value, err = db.remove("testPlant;")
+    print(f"db.remove(testPlant;): {value}, Err: {err}")
 
-    # newPlant = p.Plant("testPlant;///++", 
-    #                     12, #max height
-    #                     0, #max size
-    #                     0, #germination time
-    #                     0, #mature time
-    #                     75, #bloom time
-    #                     0, #bloom start
-    #                     0, #bloom end
-    #                     1, #full sun
-    #                     0, #Partial shade
-    #                     0, #full shade
-    #                     0, #drought tolerant
-    #                     0, #overwater sensitive
-    #                     0, #color
-    #                     0, #perennial
-    #                     0, #texture1
-    #                     0, #texture2
-    #                     0) #texture3
-    # value, err = db.add(newPlant)
-    # #print(f"db.add(testPlant;///++): {value}, Err: {err}")
-    # value, err = db.remove("testPlant;///++")
-    # #print(f"db.remove(testPlant;///++): {value}, Err {err}")
+    newPlant = p.Plant("testPlant;///++", 
+                         12, #max height
+                         0, #max size
+                         0, #germination time
+                         0, #mature time
+                         75, #bloom time
+                         0, #bloom start
+                         0, #bloom end
+                         1, #full sun
+                         0, #Partial shade
+                         0, #full shade
+                         0, #drought tolerant
+                         0, #overwater sensitive
+                         0, #color
+                         0, #perennial
+                         0, #texture1
+                         0, #texture2
+                         0) #texture3
+    value, err = db.add(newPlant)
+    print(f"db.add(testPlant;///++): {value}, Err: {err}")
+    value, err = db.remove("testPlant;///++")
+    print(f"db.remove(testPlant;///++): {value}, Err {err}")
 
-    # print("Print all:")
-    # db.printAll()
-    # #db.deleteAll()
-    # #print("Print all after deleteAll():")
-    # #db.printAll()
+    print("Print all:")
+    db.printAll()
+    db.deleteAll()
+    print("Print all after deleteAll():")
+    db.printAll()
 
     db.commit()
 
