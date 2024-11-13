@@ -3,12 +3,12 @@ TIME_TO_TIMEOUT = 2000
 TIME_TO_IDLE_WARNING = 1000
 
 WINDOW_SIZE_WIDTH = 1000
-WINDOW_SIZE_HEIGHT = 700
+WINDOW_SIZE_HEIGHT = 800
 BUTTON_SIZE = 40
 
 INFO_BOX_SPECS = {
     "x": 15,
-    "y": 530,
+    "y": 630,
     "outline": 10,
     "w": 975,
     "h": 150
