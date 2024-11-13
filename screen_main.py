@@ -135,23 +135,9 @@ class MainPage(GameState):
         for flower in self.flowers:
             flower.handleEvent(event)
             flower.update(self.days)
+            if flower.deleteMark == True:
+                self.flowers.remove(flower)
         if event.type == py.KEYDOWN:
-            if event.key == py.K_UP:
-                if(self.colNum > 1):
-                    self.colNum -= 1
-                    rescale(self, self.rowNum, self.colNum, self.cells)
-            if event.key == py.K_DOWN:
-                if(self.colNum < 8):
-                    self.colNum += 1
-                    rescale(self, self.rowNum, self.colNum, self.cells)
-            if event.key == py.K_LEFT:
-                if(self.rowNum > 1):
-                    self.rowNum -= 1
-                    rescale(self, self.rowNum, self.colNum, self.cells)
-            if event.key == py.K_RIGHT:
-                if(self.rowNum < 8):
-                    self.rowNum += 1
-                    rescale(self, self.rowNum, self.colNum, self.cells)
             if event.key == py.K_t:
                 self.drawLines = not self.drawLines
 

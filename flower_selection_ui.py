@@ -252,6 +252,7 @@ class gardenFlower:
         self.offsetY = 0
         self.collide = False
         self.image = None
+        self.deleteMark = False
         self.texture1 = "images/Generic/seed.jpg"
         print("created flower object")
 
@@ -270,11 +271,14 @@ class gardenFlower:
                     mouseX, mouseY = event.pos
                     self.offsetX = self.rect.x - mouseX
                     self.offsetY = self.rect.y - mouseY
+            if event.button == 2:
+                if self.rect.collidepoint(event.pos):
+                    self.deleteMark = True
 
         elif event.type == py.MOUSEBUTTONUP:
             if event.button == 1:
                 self.isMoving = False
-        
+
         if event.type == py.MOUSEMOTION:
             if self.isMoving:
                 mouseX, mouseY = event.pos
