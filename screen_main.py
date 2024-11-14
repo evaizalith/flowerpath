@@ -1,6 +1,5 @@
 import pygame as py 
 from abstract_screen import GameState
-from flower_placeholder import Flower
 from flower_selection_ui import FlowerSelectionUI, gardenFlower
 from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum, drawLines, SunlightViabilityButton, SoilMoistureButton
 from constants_config import *

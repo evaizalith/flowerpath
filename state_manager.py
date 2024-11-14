@@ -2,8 +2,8 @@ import pygame as py
 from constants_config import *
 
 class Game(object):
-    # Single instance of this class is responsible for managing the individual game state
-
+    #Single instance of this class is responsible for managing individual game states
+    #Also implements system-wide behaviour i.e., login screen 
     def __init__(self, screen, states, start_state):
         self.done = False
         self.screen = screen
@@ -27,12 +27,14 @@ class Game(object):
 
     def event_loop(self):
         for event in py.event.get():
-            #if statement handles idle screen and password handling
+
+            #Manages event handling if idle screen is active
             if self.idle_screen:
                 if event.type == py.QUIT:
                     self.done = True
                 elif event.type == py.MOUSEBUTTONDOWN:
                     mouse_position = py.mouse.get_pos()
+                    #Check if user has 
                     if self.password_input_text.check_click(mouse_position):
                         self.password_box_shown = True
                     else:
