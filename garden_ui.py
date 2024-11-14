@@ -18,39 +18,33 @@ class ClickBox:
         if event.type == py.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 if sunlight_selection_mode:
-                    #print(f"Cell {self.rect.topleft} clicked in selection mode")
                     if sunlight_level == 0:
                         self.color = FULL_SUN_COLOR
                         self.fill = True
                         self.fullSun = True
                         self.partialShade = False 
                         self.fullShade = False
-                        #print("Set to Full Sun")
                     elif sunlight_level == 1:
                         self.color = PARTIAL_SHADE_COLOR
                         self.fill = True
                         self.fullSun = False
                         self.partialShade = True
                         self.fullShade = False
-                        #print("Set to Partial Shade")
                     elif sunlight_level == 2:
                         self.color = FULL_SHADE_COLOR
                         self.fill = True 
                         self.fullSun = False
                         self.partialShade = False 
                         self.fullShade = True
-                        #print("Set to Full Shade")
                 if water_selection_mode:
                     if water_level == 0:
                         self.color = NORMAL_SOIL_MOISTURE_COLOR
                         self.fill = True
                         self.droughtRes = False
-                        #print("Set to normal soil moisture")
                     elif water_level == 1:
                         self.color = DRY_SOIL_MOISTURE_COLOR
                         self.fill = True
                         self.droughtRes = True
-                        #print("Set to dry soil moisture")
 
     def draw(self, screen):
         # give some feedback while viability draw is down
@@ -121,6 +115,7 @@ class TextBox:
     
     def handleEvent(self, event):
         if event.type == py.MOUSEBUTTONDOWN:
+            # changes color for feedback
             if self.rect.collidepoint(event.pos):
                 self.active = True
                 self.color = py.Color((40, 60, 200))
@@ -132,10 +127,11 @@ class TextBox:
                 if event.key == py.K_BACKSPACE:
                     self.text = self.text[:-1]
                 elif event.key == py.K_RETURN: #enter
-                    # 1ft = 30 pixels
+                    # 1ft = 60 pixels
+                    # when feetLines are on, 1yd = 60 pixels
                     # max 10 ft, min 3 ft
                     if self.text.isdigit():
-                        sizeInt = int(self.text) * 60
+                        sizeInt = int(self.text) * FEET_TO_PIXELS
                         if sizeInt > 600:
                             sizeInt = 600
                             self.text = "10"
@@ -153,6 +149,7 @@ class TextBox:
                 self.textSurface = py.font.Font(None, 32).render(self.text, True, (0, 0, 0))
 
     def draw(self, screen):
+        # binds text to rectangle
         screen.blit(self.textSurface, (self.rect.x + 5, self.rect.y + 5))
         if(self.active):
             py.draw.rect(screen, self.color, self.rect, 4)
