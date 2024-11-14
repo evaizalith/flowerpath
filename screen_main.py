@@ -67,13 +67,16 @@ class MainPage(GameState):
 
     def get_event(self, event):
         self.left_mouse_click = False
+        # ends game loop and exits
         if event.type == py.QUIT:
             self.quit = True
         elif event.type == py.MOUSEBUTTONDOWN:
             self.title_rect.center = event.pos
             mouse_position = py.mouse.get_pos()
             self.left_mouse_click = True
-            #print("mouse button down detected")
+            # Checks each add/sub days button
+            # Cannot decrease below 0 or increase above 365 (1 year)
+            # Updates slider position and display button
             if self.minus_thirty_days_button.check_button_click(py.mouse.get_pos()):
                 self.days -= 30
                 if self.days < 0:
@@ -86,13 +89,13 @@ class MainPage(GameState):
                     self.days = 0
                 self.show_day_button.update_days(self.days)
                 self.slider.calculatePosition(self.days)
+
             if self.plus_seven_days_button.check_button_click(py.mouse.get_pos()):
                 self.days += 7
                 if self.days > 365:
                     self.days = 365
                 self.show_day_button.update_days(self.days)
                 self.slider.calculatePosition(self.days)
-
             if self.plus_thirty_days_button.check_button_click(py.mouse.get_pos()):
                 self.days += 30
                 if self.days > 365:
@@ -100,18 +103,20 @@ class MainPage(GameState):
                 self.show_day_button.update_days(self.days)
                 self.slider.calculatePosition(self.days)
 
-
+            # Buttons for adjusting sunlight and water level
+            # Click on a button to select desired setting, then click]
+            # on any tile in the planner to update
             if self.sunlight_button.check_button_click(py.mouse.get_pos()):
                 self.sunlight_button.set_sunlight_level()
                 self.sunlight_selection_mode = True
                 self.soil_moisture_selection_mode = False
                 #print("Sunlight selection mode is active")
-
             if self.soil_moisture_button.check_button_click(py.mouse.get_pos()):
                 self.soil_moisture_button.set_water_level()
                 self.sunlight_selection_mode = False
                 self.soil_moisture_selection_mode = True
 
+            # Cells check for clicks to be able to update
             for cell in self.cells:
                 cell.handleEvent(event, self.sunlight_selection_mode, self.soil_moisture_selection_mode, self.sunlight_button.selected_sunlight_level, self.soil_moisture_button.selected_water_level)
                      
@@ -120,15 +125,17 @@ class MainPage(GameState):
         #Returns plant object 
             user_selected_flower = self.flower_selection_ui.get_current_flower()
             if user_selected_flower:
-                #print(f"User selected flower on the main page: {user_selected_flower.name}")
+                # drawViable enables coloring in of cells
                 self.drawViable = True
                 self.user_selected_flower = user_selected_flower
                 if self.toggle:
+                    # Creates new flower based off of user selection
                     self.flowers.append(gardenFlower(self.rectX + (self.rectSizeX/2), self.rectY + (self.rectSizeY/2), user_selected_flower))
                     self.toggle = False
                 else:
                     self.toggle = True
 
+            # for closing plant info window at bottom
             isClosed = self.flower_selection_ui.click_to_close(mouse_position)
             if isClosed:
                 self.drawViable = False
@@ -139,8 +146,10 @@ class MainPage(GameState):
         self.days = self.slider.calculateDay()
         self.show_day_button.update_days(self.days)
 
+        # textboxes check for clicks and keypresses
         for box in self.textboxes:
             box.handleEvent(event)
+            # If enter was pressed on a textbox, update respective garden dimension
             if box.rescaleToggle:
                 if box == self.textbox1:
                     self.rowNum = box.cellNum
@@ -150,17 +159,19 @@ class MainPage(GameState):
                     self.colNum = box.cellNum
                     rescale(self, self.rowNum, self.colNum, self.cells)
                     box.rescaleToggle = False
+        # Move the flower, update its size, remove if necessary.
         for flower in self.flowers:
             flower.handleEvent(event)
             flower.update(self.days)
             if flower.deleteMark == True:
                 self.flowers.remove(flower)
+        # Change from yards to feet
         if event.type == py.KEYDOWN:
             if event.key == py.K_t:
                 self.drawLines = not self.drawLines
 
     def draw(self, surface):
-        #collision in the draw loop! Sorgy...
+        #collision in the draw loop so its always calculated before drawing flowers
         for flower1 in self.flowers:
             flower1.collide = False
             for flower2 in self.flowers:
