@@ -3,7 +3,7 @@ from constants_config import *
 
 class Game(object):
     #Single instance of this class is responsible for managing individual game states
-    #Also implements system-wide behaviour i.e., login screen 
+    #Implements behaviour that needs to be exhibited across all states, i.e., idle screen  
     def __init__(self, screen, states, start_state):
         self.done = False
         self.screen = screen
@@ -13,6 +13,7 @@ class Game(object):
         self.state_name = start_state
         self.state = self.states[self.state_name]
 
+        #Login screen UI objects 
         self.idle_screen = False
         self.idle_timer = 0
         self.idle_notification_shown = False
@@ -26,6 +27,7 @@ class Game(object):
         self.password_input_text = PasswordInput(box_x_position=300, box_y_position=300, box_width=400, box_height=50)
 
     def event_loop(self):
+        #iterates over elements in user event queue
         for event in py.event.get():
 
             #Manages event handling if idle screen is active
@@ -34,13 +36,13 @@ class Game(object):
                     self.done = True
                 elif event.type == py.MOUSEBUTTONDOWN:
                     mouse_position = py.mouse.get_pos()
-                    #Check if user has 
                     if self.password_input_text.check_click(mouse_position):
                         self.password_box_shown = True
                     else:
                         self.password_box_shown = False
                     if self.resume_button.check_resume_button_click(mouse_position):
                         if self.password_input_text.verify_password():
+                            #Return to main program 
                             self.idle_screen = False
                             self.idle_notification_shown = False
                             self.idle_timer = 0
@@ -49,19 +51,22 @@ class Game(object):
                         else:
                             self.incorrect_password_notification_box_shown = True
                 elif event.type == py.KEYDOWN and self.password_box_shown:
+                    #Show user text input
                     self.password_input_text.handle_event(event)
             else:
+                #Reset idle timer if any user input is recieved
                 if event.type in (py.MOUSEMOTION, py.MOUSEBUTTONDOWN, py.KEYDOWN):
                     self.idle_timer = 0
                     self.idle_notification_shown = False
 
+                #If idle screen is inactive, pass event to current concrete state
                 self.state.get_event(event)
 
     def flip_state(self):
         # Actually switches to the next game state and passes persistent data to the new state
         current_state = self.state_name
         next_state = self.state.next_state
-        #self.done controls swithcing screens
+        #self.done = true will cause a change in screens
         self.state.done = False
         self.state_name = next_state
         self.state = self.states[self.state_name]
@@ -69,7 +74,6 @@ class Game(object):
 
     def update(self, dt):
         self.idle_timer += (dt / 1000)
-        #print(f"Idle Timer: {self.idle_timer:.2f} seconds")
 
         if self.idle_timer > TIME_TO_IDLE_WARNING:
             self.idle_notification_shown = True
@@ -82,9 +86,12 @@ class Game(object):
             self.done = True
         elif self.state.done:
             self.flip_state()
+
+        #Pass to current concrete state   
         self.state.update(dt)
 
     def draw(self):
+        #Draw on screen that is active
         self.state.draw(self.screen)
 
         if self.idle_notification_shown:
@@ -101,6 +108,7 @@ class Game(object):
         if self.incorrect_password_notification_box_shown:
             self.incorrect_password_notification_box.render(self.screen)
 
+    #Controls game clock 
     def run(self):
         while not self.done:
             dt = self.clock.tick(self.fps)
@@ -109,6 +117,7 @@ class Game(object):
             self.draw()
             py.display.update()
 
+#Idle screen UI Elements 
 class ResumeButton:
     def __init__(self, box_x_position=152, box_y_position=1000, info_box_width=400, info_box_height=67):
         self.info_box_width = info_box_width

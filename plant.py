@@ -1,6 +1,7 @@
 import math
 import pygame as py 
 
+#Plant class to store plants from database 
 class Plant():
     def __init__(self, name, maxHeight, maxSize, germinationTime, matureTime, bloomTime, bloomStart, bloomEnd, fullSun, partialShade, fullShade, droughtTolerant, overwaterSensitive, color, perennial, texture1, texture2, texture3):
         self.name = name

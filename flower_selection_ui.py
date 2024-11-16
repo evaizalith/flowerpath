@@ -172,6 +172,7 @@ class CertainFlowerButton:
         is_hovered = (self.button_x_position < x < self.button_x_position + self.button_width) and (self.button_y_position < y < self.button_y_position + self.button_height)
         return is_hovered 
     
+    #Select flower user is hovered over 
     def set_hovered(self, hovered):
         self.is_hovered = hovered
     

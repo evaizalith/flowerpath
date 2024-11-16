@@ -2,6 +2,7 @@ import pygame as py
 from constants_config import *
 from plant import Plant
 
+#Garden Grid UI element 
 class ClickBox:
 
     def __init__(self, x, y, w, h, fullSun = True, partialShade = False, fullShade = False, droughtRes = 0):
@@ -98,8 +99,6 @@ class ClickBox:
             case _:
                 py.draw.rect(screen, PURE_BLACK, self.rect, 1)
             
-                
-
 class TextBox:
 
     def __init__(self, x, y, w, h, direction, text=""):
@@ -228,7 +227,6 @@ class SunlightViabilityButton:
         sunlight_level_text = self.font.render(selected_text, True, PURE_BLACK)
         sunlight_level_text_rect = sunlight_level_text.get_rect(center=(self.box_x_position + self.button_box_width // 2, self.box_y_position + self.button_box_height + 10))
         surface.blit(sunlight_level_text, sunlight_level_text_rect)
-
 
     def set_sunlight_level(self):
         self.selected_sunlight_level = (self.selected_sunlight_level + 1) % 3

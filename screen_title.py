@@ -4,7 +4,7 @@ from abstract_screen import GameState
 from constants_config import *
 
 class TitleScreen(GameState):
-    #An instance of the Gamestate class that displays a main menu 
+    #An instance of the Gamestate class that displays title page
     def __init__(self):
         super(TitleScreen, self).__init__()
         self.FONT = py.font.SysFont('georgia', 36)

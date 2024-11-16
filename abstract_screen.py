@@ -15,11 +15,12 @@ class GameState(object):
     def startup(self, persistent):
         self.persist = persistent
 
+    #Retrieves user event from user event queue 
     def get_event(self, event):
         pass
 
+    #Update state. Called by state manager [Game Object] once per frame
     def update(self, dt):
-        #Update the state. Called by the Game object once per frame
         pass
 
     def draw(self, surface):
