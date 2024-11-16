@@ -243,6 +243,7 @@ class gardenFlower:
         self.offsetY = 0
         self.collide = False
         self.image = None
+        self.deleteMark = False
         self.texture1 = "images/Generic/seed.jpg"
         print("created flower object")
 
@@ -256,17 +257,23 @@ class gardenFlower:
     def handleEvent(self, event):
         if event.type == py.MOUSEBUTTONDOWN:
             if event.button == 1:
+                # check for mouse collision, then save offsets for later
                 if self.rect.collidepoint(event.pos):
                     self.isMoving = True
                     mouseX, mouseY = event.pos
                     self.offsetX = self.rect.x - mouseX
                     self.offsetY = self.rect.y - mouseY
+            if event.button == 2:
+                # deletes on middle mouse
+                if self.rect.collidepoint(event.pos):
+                    self.deleteMark = True
 
         elif event.type == py.MOUSEBUTTONUP:
             if event.button == 1:
                 self.isMoving = False
-        
+
         if event.type == py.MOUSEMOTION:
+            # offset keeps rectangle centered and not moving unpredictably
             if self.isMoving:
                 mouseX, mouseY = event.pos
                 self.rect.x = mouseX + self.offsetX
@@ -285,22 +292,33 @@ class gardenFlower:
             screen.blit(self.image, (self.rect.x, self.rect.y))
 
     def update(self, days):
+        # calculates growth, gets percentage grown from plant.py's growth function
         size = self.flower.getHeight(days)
         growthPercent = size/self.flower.maxHeight
-        pxSize = (self.flower.maxHeight/12) * 60
+        pxSize = (self.flower.maxHeight/12) * FEET_TO_PIXELS # 1 ft = 60 px
         pxSize = growthPercent * pxSize
+        # minimum 15 square pixels for easier dragging
         if pxSize < 15:
             pxSize = 15
+        # variable for keeping track of updating image for performance
+        # only update image if rectangle changes in size or stage
         rectChange = False
         if not pxSize == self.rect.width:
             rectChange = True
             self.rect.width = pxSize
             self.rect.height = pxSize
         
+        #recenters the max rectangle to the new plant rectangle size
         self.rect.x = self.maxRect.x + (self.maxRect.width/2) - (self.rect.width/2)
         self.rect.y = self.maxRect.y + (self.maxRect.height/2) - (self.rect.height/2)
 
-
+        """ Keeps track of what image the flower should display
+            Compares the current day of the program (days) to each flower's unique growing stages
+            Flowers start as seeds, and remain seeds until reaching germination time
+            Flowers become sprouts after reaching germination time, and remain so until mature time
+            Both the seed and sprout images are the same for all flowers
+            Once the flower has matured, it displays a unique bloom image for its bloomTime
+            After that, the generic sprout is displayed again"""
         if days <= self.flower.germinationTime:
             self.texture1 = "images/Generic/seed.jpg"
             rectChange = True
@@ -314,13 +332,63 @@ class gardenFlower:
             self.texture1 = "images/Generic/sprout.jpg"
             rectChange = True
 
+        # Caches certain flower textures to improve performance
         if self.texture1 in self.image_cache:
             self.image = self.image_cache[self.texture1]
+        # changes chache if rectChange is true
         if rectChange:
             self.image = py.image.load(self.texture1).convert_alpha()
             self.image = py.transform.scale(self.image, (self.rect.width, self.rect.height))
             self.image_cache[self.texture1] = self.image  
 
 
+class timelineSlider:
+    def __init__(self, x, y, size):
+        self.rect = py.Rect(x - (size/2), y + (size/2), size, size)
+        self.isMoving = False
+        self.offsetX = 0
+        self.offsetY = 0
+
+    def handleEvent(self, event):
+    # Very similar to flowers, but only moves on x axis
+        if event.type == py.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.rect.collidepoint(event.pos):
+                    self.isMoving = True
+                    mouseX, mouseY = event.pos
+                    self.offsetX = self.rect.x - mouseX
+
+        elif event.type == py.MOUSEBUTTONUP:
+            if event.button == 1:
+                self.isMoving = False
+
+        if event.type == py.MOUSEMOTION:
+            if self.isMoving:
+                mouseX, mouseY = event.pos
+                self.rect.x = mouseX + self.offsetX
+                if self.rect.x < 170:
+                    self.rect.x = 170
+                if self.rect.x > 770:
+                    self.rect.x = 770
+
+    def draw(self, screen):
+        if self.isMoving:
+            py.draw.rect(screen, LIGHT_BLUE, self.rect)
+        else:
+            py.draw.rect(screen, MEDIUM_BLUE, self.rect)
+
+    # for calculating the day from the slider's position
+    def calculateDay(self):
+        growPercent = ((self.rect.x - 170) / 600)
+        days = round(growPercent * 365)
+        return days
+    
+    # for calculating the slider's position from the days
+    # called when buttons are clicked
+    def calculatePosition(self, days):
+        sliderPercent = days/365
+        self.rect.x = 170 + round(sliderPercent * 600)
+
+    
 
 
