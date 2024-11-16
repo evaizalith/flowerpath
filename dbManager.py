@@ -182,27 +182,25 @@ class databaseManager():
         value, err = self.add(plant)
         print(f"db.add(Plant): {value}, Err: {err}")
 
-        plant = p.Plant("Larkspur", 42, 14, 17, 85, 0, 5, 8, 1, 1, 0, 0, 0, 0, 0, "images/larkspur.jpg", 0, 0)
+        plant = p.Plant("Larkspur", 42, 14, 17, 85, 30, 5, 8, 1, 1, 0, 0, 0, 0, 0, "images/larkspur.jpg", 0, 0)
         value, err = self.add(plant)
         print(f"db.add(Plant): {value}, Err: {err}")
 
-        plant = p.Plant("Bleeding Heart", 24, 30, 365, 379, 0, 5, 6, 0, 1, 1, 1, 1, 0, 1, "images/bleedingheart.jpg", 0, 0)
+        plant = p.Plant("Bleeding Heart", 24, 30, 365, 379, 37, 5, 6, 0, 1, 1, 1, 1, 0, 1, "images/bleedingheart.jpg", 0, 0)
         value, err = self.add(plant)
         print(f"db.add(Plant): {value}, Err: {err}")
 
-        plant = p.Plant("Hostas", 36, 50, 14, 48, 0, 6, 8, 0, 1, 1, 1, 0, 0, 1, "images/hostas.jpg", 0, 0)
+        plant = p.Plant("Hostas", 36, 50, 14, 48, 21, 6, 8, 0, 1, 1, 1, 0, 0, 1, "images/hostas.jpg", 0, 0)
         value, err = self.add(plant)
         print(f"db.add(Plant): {value}, Err: {err}")
 
-        plant = p.Plant("Coral Bells", 18, 20, 28, 90, 0, 5, 7, 0, 1, 1, 0, 0, 0, 1, "images/coralbells.jpg", 0, 0)
+        plant = p.Plant("Coral Bells", 18, 20, 28, 90, 45, 5, 7, 0, 1, 1, 0, 0, 0, 1, "images/coralbells.jpg", 0, 0)
         value, err = self.add(plant)
         print(f"db.add(Plant): {value}, Err: {err}")
 
         self.printAll()
 
         self.commit()
-
-
 
 # Used for testing the database manager
 if __name__ == "__main__":
