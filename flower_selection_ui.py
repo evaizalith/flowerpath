@@ -1,5 +1,6 @@
 import pygame as py
 from dbManager import databaseManager
+from file_print_functions import writeToCsvFile, addToTxtFile
 from plant import Plant
 from constants_config import *
 
@@ -25,6 +26,9 @@ class FlowerSelectionUI:
         if not success:
             self.db_manager_connection_success = False
             print(f"Error connecting to database: {err}")
+
+            #Crash gracefully by providing an error log
+            addToTxtFile(f"Error Log", f"Database connection error: {err} \n")
             
         else: 
             print("Connected to database successfully")
