@@ -1,28 +1,24 @@
 import pygame as py
 from dbManager import databaseManager
-from flower_placeholder import Flower
 from plant import Plant
 from constants_config import *
 
-
+#Controls the left UI bar containing Flower Selection Buttons 
 class FlowerSelectionUI:
     def __init__(self, position=(50,50), dp_path="test"):
         self.db_manager_connection_success = False
         self.buttons = []
-        #[Flower("Calendula"), Flower("Zinna"), Flower("Foxglove"), Flower("Nasturtium"), Flower("Annual Phlox"), Flower("Viola"), Flower("Snapdragon"), Flower("Cosmos"), Flower("Sweet Pea"), Flower("Baby's Breath"), Flower("Marigold"), Flower("Milkweed"), Flower("Larkspur"), Flower("Bleeding Heart"), Flower("Hostas"), Flower("Coral Bells")]
         self.position = position
         self.window_x_size = 20
         self.window_y_size = 40
         self.button_vertical_spacing = 60
         self.column_separation_margin = 60
         self.font = py.font.Font(None, 24)
-        #self.attached_image = py.image.load("placeholders_assets/pinkflower.jpg").convert_alpha()
         self.hovered_flower = None
         self.flower_information_box = None
         self.user_selected_flower = None
 
         self.db_manager = databaseManager("test")
-        #Add 'crash gracefully' feature later 
 
         success, err = self.db_manager.connect()
 
@@ -34,11 +30,12 @@ class FlowerSelectionUI:
             print("Connected to database successfully")
             self.db_manager_connection_success = True
             self.flowers = self.load_flowers_from_database() 
-        
-    #This is the thing you call to get it on the main page
+
     def render(self, surface, mouse_position, mouse_click):
         font = py.font.Font(None, 24)
         first_column = len(self.flowers) // 2
+        
+        #Renders first column of flower selection buttons 
         for i, flower in enumerate(self.flowers[:first_column]):
             flower_x_position = self.window_x_size
             flower_y_position = self.window_y_size + i * self.button_vertical_spacing
@@ -51,11 +48,12 @@ class FlowerSelectionUI:
             else:
                 button.set_hovered(False)
 
+            #Return flower object when user clicks on that flower's selection buttons 
             get_selected_flower = button.get_flower(mouse_position, mouse_click)
             if get_selected_flower:
-                #print(f"Selected flower: {get_selected_flower.name}")
                 self.user_selected_flower = get_selected_flower  
 
+        #Renders second column of flower selection buttons 
         for i, flower in enumerate(self.flowers[first_column:]):
             flower_x_position = self.window_x_size + self.column_separation_margin
             flower_y_position = self.window_y_size + i * self.button_vertical_spacing
@@ -67,22 +65,24 @@ class FlowerSelectionUI:
                 button.set_hovered(True)
             else:
                 button.set_hovered(False)
-
+                
             get_selected_flower = button.get_flower(mouse_position, mouse_click)
             if get_selected_flower:
                 self.user_selected_flower = get_selected_flower
 
+        #Display flower information page 
         if self.hovered_flower:
             self.flower_information_box = FlowerInformationBox(surface, self.hovered_flower)
             self.flower_information_box.is_visible = True
             self.flower_information_box.render(surface)
 
-    #------------- This is the implementation of the getter for main page ----- This returns the current flower!!!!!!
+    #Getter for user selected 
     def get_current_flower(self):
         retrieved_flower = self.user_selected_flower
         self.user_selected_flower = None
         return retrieved_flower
-
+    
+    #Closes information box
     def click_to_close(self, mouse_position):
         isClosed = False
         if (self.flower_information_box != None) and self.flower_information_box.is_visible:
@@ -127,13 +127,11 @@ class FlowerSelectionUI:
                     texture3 = flower[18]
                     plant = Plant(name, max_height, max_size, germination_time, mature_time, bloom_time, bloom_start, bloom_end, full_sun, partial_shade, full_shade, drought_tolerant, overwater_sensitive, color, perennial, texture1, texture2, texture3)
                     flowers.append(plant)
-                    #print("Plant " + plant.name + " was appended")
-                    #print("Texture 1 is:" + plant.texture1)
-
         return flowers
     
-                
+#Creates each individual flower button 
 class CertainFlowerButton: 
+    #Dictionary as image cache
     image_cache = {}
 
     def __init__(self, flower, button_x_position, button_y_position):
@@ -157,32 +155,27 @@ class CertainFlowerButton:
             self.image = py.transform.scale(self.image, (self.button_width, self.button_height))
             self.image_cache[self.texture1] = self.image  
 
-
     def render(self, surface):
-
         menu_background_surface = py.Rect(self.button_x_position - self.button_width_offset, self.button_y_position - self.button_width_offset, self.button_width + self.button_height_offset, self.button_height + self.button_height_offset)
         menu_background_color = WARM_DARK_BROWN
         py.draw.rect(surface, menu_background_color, menu_background_surface, border_radius=10)
 
-        #button_text_surface = self.font.render(self.flower.name, True, (0, 0, 0))
         button_rectangle_surface = py.Rect(self.button_x_position, self.button_y_position, self.button_height, self.button_width)
         button_background_color = WARM_DARK_BROWN
         py.draw.rect(surface, button_background_color, button_rectangle_surface, border_radius=10)
 
         if self.image:
             surface.blit(self.image, (self.button_x_position, self.button_y_position))
-
-        #surface.blit(button_text_surface, button_rectangle_surface) 
-
+    
     def check_if_hovered(self, mouse_position):
         x, y = mouse_position
         is_hovered = (self.button_x_position < x < self.button_x_position + self.button_width) and (self.button_y_position < y < self.button_y_position + self.button_height)
         return is_hovered 
     
+    #Select flower user is hovered over 
     def set_hovered(self, hovered):
         self.is_hovered = hovered
     
-    #This is a getter that we will use to get the flower 
     def get_flower(self, mouse_position, mouse_click):
         if self.check_if_hovered(mouse_position) and mouse_click:
             return self.flower
@@ -201,13 +194,12 @@ class FlowerInformationBox:
         self.box_x_position = box_x_position
         self.box_y_position = box_y_position
         self.outline_width = outline_width
-        self.inner_box_offset = 2 * outline_width #Accounts for margins on each side 
+        self.inner_box_offset = 2 * outline_width  
         self.font = py.font.Font(None, 24)
         self.hovered_flower = hovered_flower
         self.is_visible = False 
         
     def render(self, surface):
-
         if not self.is_visible:
             return 
         
@@ -224,7 +216,7 @@ class FlowerInformationBox:
         surface.blit(info_box_text, info_box_text_surface)
 
         exit_button_surface = py.Rect(self.box_x_position + self.info_box_width - 25, self.box_y_position + 5, 20, 20)
-        exit_button_surface_color = (255, 81, 57)
+        exit_button_surface_color = EXIT_BUTTON_RED
         exit_button_text = self.font.render("X", True, (0, 0, 0))
         exit_button_text_surface = exit_button_text.get_rect(center=exit_button_surface.center)
 
@@ -236,8 +228,8 @@ class FlowerInformationBox:
         if((self.box_x_position + self.info_box_width - 25 <= x <= self.box_x_position + self.info_box_width) and (self.box_y_position + 5 <= y <= self.box_y_position + 25)):
             return True
         return False
-    
 
+#Actual spawnable flower image     
 class gardenFlower:
     image_cache = {}
     

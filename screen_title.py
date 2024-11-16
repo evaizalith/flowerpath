@@ -4,14 +4,12 @@ from abstract_screen import GameState
 from constants_config import *
 
 class TitleScreen(GameState):
-    #An instance of the Gamestate class that displays a main menu 
+    #An instance of the Gamestate class that displays title page
     def __init__(self):
         super(TitleScreen, self).__init__()
         self.FONT = py.font.SysFont('georgia', 36)
         self.title = self.FONT.render("Garden Companion Planner", True, (py.Color("black")))
         self.title_rect = self.title.get_rect(center=self.screen_rect.center)
-        #An example of storing data in the persist dictionary
-        #This data can now be accessed from all screens - it is shared between all states
         self.persist["screen_color"] = "forestgreen"
         self.next_state = "MAINPAGE"
 

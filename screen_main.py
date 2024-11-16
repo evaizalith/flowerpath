@@ -1,12 +1,11 @@
 import pygame as py 
 from abstract_screen import GameState
-from flower_placeholder import Flower
 from flower_selection_ui import FlowerSelectionUI, gardenFlower, timelineSlider
 from garden_ui import ClickBox, TextBox, rescale, rescaleCellNum, drawLines, SunlightViabilityButton, SoilMoistureButton
 from constants_config import *
 
 class MainPage(GameState):
-    #Another instance of a gamestate object 
+    #Another instance of a gamestate object
     def __init__(self):
         super(MainPage, self).__init__()
         self.next_state = "TITLE"
@@ -55,7 +54,6 @@ class MainPage(GameState):
         
         self.sunlight_button = SunlightViabilityButton(garden_options_x_spacing, 30, garden_options_width, garden_options_height, "Sunlight")
         self.soil_moisture_button = SoilMoistureButton(garden_options_x_spacing, 110, garden_options_width, garden_options_height, "Soil Drainage")
-
 
     def startup(self, persistent):
         self.persist = persistent
@@ -110,7 +108,6 @@ class MainPage(GameState):
                 self.sunlight_button.set_sunlight_level()
                 self.sunlight_selection_mode = True
                 self.soil_moisture_selection_mode = False
-                #print("Sunlight selection mode is active")
             if self.soil_moisture_button.check_button_click(py.mouse.get_pos()):
                 self.soil_moisture_button.set_water_level()
                 self.sunlight_selection_mode = False
@@ -121,8 +118,7 @@ class MainPage(GameState):
                 cell.handleEvent(event, self.sunlight_selection_mode, self.soil_moisture_selection_mode, self.sunlight_button.selected_sunlight_level, self.soil_moisture_button.selected_water_level)
                      
 
-        #holds current flower selection - this is the getter
-        #Returns plant object 
+            #Getter for selected flower from flower buttons 
             user_selected_flower = self.flower_selection_ui.get_current_flower()
             if user_selected_flower:
                 # drawViable enables coloring in of cells
@@ -244,6 +240,8 @@ class ShowDayButton:
         self.box_y_position = box_y_position
         self.button_box_width = button_box_width
         self.button_box_height = button_box_height
+        self.button_margin = 5
+
     def update_days(self, days):
         self.days = days
  
@@ -251,7 +249,8 @@ class ShowDayButton:
         button_background_rect = py.Rect(self.box_x_position, self.box_y_position, self.button_box_width, self.button_box_height)
         button_background_color = WARM_DARK_BROWN
         py.draw.rect(surface, button_background_color, button_background_rect, border_radius=20)
-        button_rect = py.Rect(self.box_x_position + 5, self.box_y_position + 5, self.button_box_width - 10, self.button_box_height - 10)
+
+        button_rect = py.Rect(self.box_x_position + self.button_margin, self.box_y_position + self.button_margin, self.button_box_width - (self.button_margin * 2), self.button_box_height - (self.button_margin * 2))
         button_color = PURE_WHITE
         py.draw.rect(surface, button_color, button_rect, border_radius=20)
 
